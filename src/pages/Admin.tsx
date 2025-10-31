@@ -37,11 +37,24 @@ export default function Admin() {
       supabase.from("courses").select("*").order("name"),
     ]);
 
-    if (claimsData.data) setClaims(claimsData.data);
-    if (coursesData.data) {
-      setCourses(coursesData.data);
+    if (claimsData.error) {
+      console.error("Error fetching claims:", claimsData.error);
+      toast({
+        title: "Error loading claims",
+        description: claimsData.error.message,
+        variant: "destructive",
+      });
+    } else {
+      console.log("Claims fetched:", claimsData.data);
+      setClaims(claimsData.data || []);
+    }
+
+    if (coursesData.error) {
+      console.error("Error fetching courses:", coursesData.error);
+    } else {
+      setCourses(coursesData.data || []);
       const amounts: { [key: string]: string } = {};
-      coursesData.data.forEach((course) => {
+      (coursesData.data || []).forEach((course) => {
         amounts[course.id] = course.prize_amount?.toString() || "0";
       });
       setPrizeAmounts(amounts);
