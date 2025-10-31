@@ -130,7 +130,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
             {!course.coming_soon && course.prize_amount && (
               <div className="p-4 bg-gradient-prize rounded-lg text-center">
                 <p className="text-sm font-medium text-secondary-foreground/80 mb-1">Prize Pool</p>
-                <p className="text-3xl font-bold text-secondary-foreground">£{course.prize_amount.toLocaleString()}</p>
+                <p className="text-3xl font-bold text-secondary">£{course.prize_amount.toLocaleString()}</p>
               </div>
             )}
             {!course.coming_soon && (
