@@ -16,7 +16,7 @@ const Settings = () => {
   const [profile, setProfile] = useState<any>(null);
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
-  const { subscribed, checkSubscription, loading: subscriptionLoading } = useSubscription();
+  const { subscribed, renewalDate, checkSubscription, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -246,6 +246,18 @@ const Settings = () => {
                       <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
                       Shot history tracking
                     </li>
+                    {renewalDate && (
+                      <li className="flex items-center gap-2 text-sm mt-4 pt-3 border-t border-border">
+                        <span className="font-medium">Next renewal:</span>
+                        <span className="text-muted-foreground">
+                          {new Date(renewalDate).toLocaleDateString('en-GB', { 
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                          })}
+                        </span>
+                      </li>
+                    )}
                   </>
                 ) : (
                   <>

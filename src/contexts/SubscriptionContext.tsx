@@ -7,6 +7,7 @@ interface SubscriptionContextType {
   user: User | null;
   subscribed: boolean;
   loading: boolean;
+  renewalDate: string | null;
   checkSubscription: () => Promise<void>;
 }
 
@@ -15,6 +16,7 @@ const SubscriptionContext = createContext<SubscriptionContextType>({
   user: null,
   subscribed: false,
   loading: true,
+  renewalDate: null,
   checkSubscription: async () => {},
 });
 
@@ -24,6 +26,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [subscribed, setSubscribed] = useState(false);
+  const [renewalDate, setRenewalDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const checkSubscription = async () => {
@@ -50,9 +53,11 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
 
       if (error) throw error;
       setSubscribed(data?.subscribed || false);
+      setRenewalDate(data?.subscription_end || null);
     } catch (error) {
       console.error("Error checking subscription:", error);
       setSubscribed(false);
+      setRenewalDate(null);
     } finally {
       setLoading(false);
     }
@@ -93,6 +98,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         user,
         subscribed,
         loading,
+        renewalDate,
         checkSubscription,
       }}
     >
