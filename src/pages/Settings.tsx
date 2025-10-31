@@ -16,7 +16,7 @@ const Settings = () => {
   const [profile, setProfile] = useState<any>(null);
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
-  const { subscribed, checkSubscription } = useSubscription();
+  const { subscribed, checkSubscription, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -209,21 +209,27 @@ const Settings = () => {
             <CardDescription>Manage your subscription and billing</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="font-semibold">Current Plan</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {subscribed ? "Monthly Subscription" : "Free Trial"}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-accent">
-                    {subscribed ? "£9.99" : "£0"}
-                  </p>
-                  <p className="text-sm text-muted-foreground">per month</p>
-                </div>
+            {subscriptionLoading ? (
+              <div className="p-4 bg-muted/50 rounded-lg animate-pulse">
+                <div className="h-20 bg-muted rounded"></div>
               </div>
+            ) : (
+              <>
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="font-semibold">Current Plan</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {subscribed ? "Monthly Subscription" : "Free Trial"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-accent">
+                        {subscribed ? "£9.99" : "£0"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">per month</p>
+                    </div>
+                  </div>
               
               <ul className="space-y-2 mb-4">
                 {subscribed ? (
@@ -267,6 +273,8 @@ const Settings = () => {
             <p className="text-xs text-muted-foreground text-center">
               Subscription powered by Stripe. Manage billing and payment methods.
             </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </main>
