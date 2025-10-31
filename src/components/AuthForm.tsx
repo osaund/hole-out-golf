@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import logo from "@/assets/logo.png";
 
 export const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -90,8 +90,8 @@ export const AuthForm = () => {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-muted/20 to-background">
       <Card className="w-full max-w-md shadow-card">
         <CardHeader className="space-y-4 text-center">
-          <div className="mx-auto w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center">
-            <Trophy className="w-8 h-8 text-primary-foreground" />
+          <div className="mx-auto w-16 h-16 flex items-center justify-center">
+            <img src={logo} alt="Hole Out Golf" className="w-16 h-16" />
           </div>
           <CardTitle className="text-3xl font-bold">Hole Out Golf</CardTitle>
           <CardDescription>
