@@ -123,7 +123,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
                 <SelectValue placeholder="Select a course" />
               </SelectTrigger>
               <SelectContent>
-                {courses.map((course) => (
+                {courses.filter(course => !course.coming_soon).map((course) => (
                   <SelectItem key={course.id} value={course.id}>
                     {course.name} - {course.location}
                   </SelectItem>
@@ -132,53 +132,55 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
             </Select>
           </div>
 
-          {subscribed ? (
-            <div className="space-y-2">
-              <Label htmlFor="shot">Select Recent Shot (Optional)</Label>
-              <Select value={selectedShotId} onValueChange={setSelectedShotId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a recent shot or enter details below" />
-                </SelectTrigger>
-                <SelectContent>
-                  {recentShots.map((shot) => (
-                    <SelectItem key={shot.id} value={shot.id}>
-                      {shot.courses?.name} - {format(new Date(shot.created_at), "PPP")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          ) : null}
+          {subscribed && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="shot">Select Recent Shot (Optional)</Label>
+                <Select value={selectedShotId} onValueChange={setSelectedShotId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a recent shot or enter details below" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {recentShots.map((shot) => (
+                      <SelectItem key={shot.id} value={shot.id}>
+                        {shot.courses?.name} - {format(new Date(shot.created_at), "PPP")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-          {!subscribed || !selectedShotId ? (
-            <div className="space-y-2">
-              <Label>Date of Shot</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !claimDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {claimDate ? format(claimDate, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={claimDate}
-                    onSelect={setClaimDate}
-                    disabled={(date) => date > new Date() || date < new Date("2024-01-01")}
-                    initialFocus
-                    className={cn("p-3 pointer-events-auto")}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          ) : null}
+              {!selectedShotId && (
+                <div className="space-y-2">
+                  <Label>Date of Shot</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !claimDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {claimDate ? format(claimDate, "PPP") : <span>Pick a date</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={claimDate}
+                        onSelect={setClaimDate}
+                        disabled={(date) => date > new Date() || date < new Date("2024-01-01")}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
+            </>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="teeTime">Tee Time</Label>
