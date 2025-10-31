@@ -129,9 +129,12 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             {!course.coming_soon && course.prize_amount && (
-              <div className="p-4 bg-gradient-prize rounded-lg text-center">
-                <p className="text-sm font-medium text-secondary-foreground/80 mb-1">Prize Pool</p>
-                <p className="text-3xl font-bold text-secondary-foreground">£{course.prize_amount.toLocaleString()}</p>
+              <div className="relative p-5 bg-gradient-prize rounded-lg text-center overflow-hidden animate-fade-in shadow-lg border-2 border-primary/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 animate-pulse" />
+                <div className="relative z-10">
+                  <p className="text-xs font-semibold text-primary/80 mb-1 uppercase tracking-wider">Prize Pool</p>
+                  <p className="text-4xl font-bold text-primary drop-shadow-sm">£{course.prize_amount.toLocaleString()}</p>
+                </div>
               </div>
             )}
             {!course.coming_soon && (

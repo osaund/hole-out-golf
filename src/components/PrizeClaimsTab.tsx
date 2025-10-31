@@ -59,9 +59,12 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
           <CardContent>
             <div className="space-y-2">
               {claim.prize_amount && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Prize Amount:</span>
-                  <span className="font-semibold text-accent">£{claim.prize_amount.toFixed(2)}</span>
+                <div className="relative p-4 bg-gradient-prize rounded-lg overflow-hidden border border-primary/20">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5" />
+                  <div className="relative z-10 flex justify-between items-center">
+                    <span className="text-sm font-semibold text-primary/80 uppercase tracking-wide">Prize Amount</span>
+                    <span className="text-2xl font-bold text-primary">£{claim.prize_amount.toFixed(2)}</span>
+                  </div>
                 </div>
               )}
               {claim.notes && (
