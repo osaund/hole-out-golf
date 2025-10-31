@@ -24,7 +24,6 @@ interface PrizeClaimFormProps {
 
 export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess }: PrizeClaimFormProps) => {
   const [courseId, setCourseId] = useState("");
-  const [holeNumber, setHoleNumber] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedShotId, setSelectedShotId] = useState("");
@@ -75,7 +74,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       const { error } = await supabase.from("prize_claims").insert({
         user_id: userId,
         course_id: finalCourseId,
-        hole_number: parseInt(holeNumber),
+        hole_number: 1, // Default value
         notes,
         status: "pending",
         claim_date: finalDate.toISOString(),
@@ -91,7 +90,6 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
 
       onOpenChange(false);
       setCourseId("");
-      setHoleNumber("");
       setNotes("");
       setSelectedShotId("");
       setClaimDate(undefined);
@@ -118,12 +116,28 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="course">Golf Course</Label>
+            <Select value={courseId} onValueChange={setCourseId} required>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a course" />
+              </SelectTrigger>
+              <SelectContent>
+                {courses.map((course) => (
+                  <SelectItem key={course.id} value={course.id}>
+                    {course.name} - {course.location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {subscribed ? (
             <div className="space-y-2">
-              <Label htmlFor="shot">Select Recent Shot</Label>
-              <Select value={selectedShotId} onValueChange={setSelectedShotId} required>
+              <Label htmlFor="shot">Select Recent Shot (Optional)</Label>
+              <Select value={selectedShotId} onValueChange={setSelectedShotId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a recent shot" />
+                  <SelectValue placeholder="Select a recent shot or enter details below" />
                 </SelectTrigger>
                 <SelectContent>
                   {recentShots.map((shot) => (
@@ -134,52 +148,38 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
                 </SelectContent>
               </Select>
             </div>
-          ) : (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="course">Golf Course</Label>
-                <Select value={courseId} onValueChange={setCourseId} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a course" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {courses.map((course) => (
-                      <SelectItem key={course.id} value={course.id}>
-                        {course.name} - {course.location}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Date of Shot</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !claimDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {claimDate ? format(claimDate, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={claimDate}
-                      onSelect={setClaimDate}
-                      disabled={(date) => date > new Date() || date < new Date("2024-01-01")}
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </>
-          )}
+          ) : null}
+
+          {!subscribed || !selectedShotId ? (
+            <div className="space-y-2">
+              <Label>Date of Shot</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !claimDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {claimDate ? format(claimDate, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={claimDate}
+                    onSelect={setClaimDate}
+                    disabled={(date) => date > new Date() || date < new Date("2024-01-01")}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          ) : null}
+
           <div className="space-y-2">
             <Label htmlFor="teeTime">Tee Time</Label>
             <Input
@@ -188,19 +188,6 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
               value={teeTime}
               onChange={(e) => setTeeTime(e.target.value)}
               required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="hole">Hole Number</Label>
-            <Input
-              id="hole"
-              type="number"
-              min="1"
-              max="18"
-              value={holeNumber}
-              onChange={(e) => setHoleNumber(e.target.value)}
-              required
-              placeholder="1-18"
             />
           </div>
           <div className="space-y-2">
