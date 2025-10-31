@@ -38,7 +38,7 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {claims.map((claim) => (
-        <Card key={claim.id} className="shadow-card hover:shadow-soft transition-all border-0 bg-card/50 backdrop-blur-sm">
+        <Card key={claim.id} className="shadow-card hover:shadow-soft transition-all border-0 bg-card/50 backdrop-blur-sm overflow-hidden">
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
