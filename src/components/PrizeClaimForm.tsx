@@ -90,6 +90,10 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         return;
       }
 
+      // Get the selected course to get prize amount
+      const selectedCourse = courses.find(c => c.id === finalCourseId);
+      const prizeAmount = selectedCourse?.prize_amount || null;
+
       const { error } = await supabase.from("prize_claims").insert({
         user_id: userId,
         course_id: finalCourseId,
@@ -98,6 +102,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         status: "pending",
         claim_date: finalDate.toISOString(),
         shot_id: subscribed ? selectedShotId : null,
+        prize_amount: prizeAmount,
       });
 
       if (error) throw error;
