@@ -58,10 +58,6 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Hole Number:</span>
-                <span className="font-medium">#{claim.hole_number}</span>
-              </div>
               {claim.prize_amount && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Prize Amount:</span>
