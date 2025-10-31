@@ -11,6 +11,15 @@ interface CoursesTabProps {
   courses: any[];
 }
 
+const sortCourses = (courses: any[]) => {
+  return [...courses].sort((a, b) => {
+    // Coming soon courses go last
+    if (a.coming_soon && !b.coming_soon) return 1;
+    if (!a.coming_soon && b.coming_soon) return -1;
+    return 0;
+  });
+};
+
 const courseImages: Record<string, string> = {
   "salisbury-golf.jpg": salisburyGolf,
   "bibury-golf.jpg": biburyGolf,
@@ -19,6 +28,7 @@ const courseImages: Record<string, string> = {
 
 export const CoursesTab = ({ courses }: CoursesTabProps) => {
   const { toast } = useToast();
+  const sortedCourses = sortCourses(courses);
 
   const handlePlayNow = (courseName: string) => {
     toast({
@@ -29,7 +39,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {courses.map((course) => (
+      {sortedCourses.map((course) => (
         <Card key={course.id} className="shadow-soft hover:shadow-card transition-all overflow-hidden">
           {course.image_url && (
             <div className="relative h-48 overflow-hidden">
@@ -56,10 +66,12 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Par 3 Holes</span>
-              <span className="text-lg font-semibold text-primary">{course.par_3_count}</span>
-            </div>
+            {!course.coming_soon && course.prize_amount && (
+              <div className="p-4 bg-gradient-prize rounded-lg text-center">
+                <p className="text-sm font-medium text-secondary-foreground/80 mb-1">Prize Pool</p>
+                <p className="text-3xl font-bold text-secondary-foreground">£{course.prize_amount.toLocaleString()}</p>
+              </div>
+            )}
             {!course.coming_soon && (
               <Button
                 onClick={() => handlePlayNow(course.name)}

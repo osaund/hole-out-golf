@@ -14,8 +14,8 @@ export const PrizeClaimBanner = ({ onOpenForm }: PrizeClaimBannerProps) => {
             <Trophy className="w-8 h-8 text-secondary-foreground" />
           </div>
           <div>
-            <h2 className="text-3xl font-bold text-secondary-foreground mb-1">£1,000 Prize Pool</h2>
-            <p className="text-secondary-foreground/80">Got a hole-in-one? Claim your prize now!</p>
+            <h2 className="text-3xl font-bold text-secondary-foreground mb-1">Win Cash Prizes!</h2>
+            <p className="text-secondary-foreground/80">Got a hole-in-one? Prizes up to £1,000 per course!</p>
           </div>
         </div>
         <Button

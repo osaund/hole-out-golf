@@ -23,6 +23,7 @@ export type Database = {
           location: string | null
           name: string
           par_3_count: number | null
+          prize_amount: number | null
         }
         Insert: {
           coming_soon?: boolean | null
@@ -32,6 +33,7 @@ export type Database = {
           location?: string | null
           name: string
           par_3_count?: number | null
+          prize_amount?: number | null
         }
         Update: {
           coming_soon?: boolean | null
@@ -41,6 +43,7 @@ export type Database = {
           location?: string | null
           name?: string
           par_3_count?: number | null
+          prize_amount?: number | null
         }
         Relationships: []
       }
