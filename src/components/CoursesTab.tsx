@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Target, Play, Sparkles } from "lucide-react";
+import { MapPin, Target, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SubscribeDialog } from "@/components/SubscribeDialog";
@@ -129,23 +129,9 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             {!course.coming_soon && course.prize_amount && (
-              <div className="relative p-6 rounded-xl overflow-hidden group hover:scale-105 transition-transform duration-300">
-                {/* Animated gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-accent via-secondary to-accent opacity-90" />
-                <div className="absolute inset-0 bg-gradient-to-tr from-accent/50 via-transparent to-secondary/50 animate-pulse" />
-                
-                {/* Shine effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                
-                {/* Content */}
-                <div className="relative z-10 flex flex-col items-center gap-2">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-accent-foreground animate-pulse" />
-                    <span className="text-sm font-bold text-accent-foreground uppercase tracking-widest">Prize Pool</span>
-                    <Sparkles className="w-5 h-5 text-accent-foreground animate-pulse" />
-                  </div>
-                  <p className="text-5xl font-black text-accent-foreground drop-shadow-lg">£{course.prize_amount.toLocaleString()}</p>
-                </div>
+              <div className="p-4 bg-gradient-prize rounded-lg text-center">
+                <p className="text-sm font-medium text-secondary-foreground/80 mb-1">Prize Pool</p>
+                <p className="text-3xl font-bold text-secondary-foreground">£{course.prize_amount.toLocaleString()}</p>
               </div>
             )}
             {!course.coming_soon && (
