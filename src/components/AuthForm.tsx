@@ -13,7 +13,8 @@ export const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -43,7 +44,8 @@ export const AuthForm = () => {
           password,
           options: {
             data: {
-              full_name: fullName,
+              first_name: firstName,
+              last_name: lastName,
               phone: phone,
             },
             emailRedirectTo: `${window.location.origin}/`,
@@ -139,14 +141,25 @@ export const AuthForm = () => {
             {!isLogin && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
+                  <Label htmlFor="firstName">First Name</Label>
                   <Input
-                    id="fullName"
+                    id="firstName"
                     type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     required={!isLogin}
-                    placeholder="John Doe"
+                    placeholder="John"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required={!isLogin}
+                    placeholder="Doe"
                   />
                 </div>
                 <div className="space-y-2">
