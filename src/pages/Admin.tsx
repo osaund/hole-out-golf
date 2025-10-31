@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, DollarSign, CheckCircle, XCircle, ArrowLeft, RotateCcw } from "lucide-react";
+import { Trophy, DollarSign, ArrowLeft, Save } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -210,71 +211,74 @@ export default function Admin() {
                 </CardContent>
               </Card>
             ) : (
-              claims.map((claim) => (
-                <Card key={claim.id} className="shadow-soft">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="flex items-center gap-2">
-                          <Trophy className="w-5 h-5 text-accent" />
-                          {getCourseName(claim.course_id)} - Hole {claim.hole_number}
-                        </CardTitle>
-                        <CardDescription>
-                          Claimed by: {claim.profiles?.full_name || "Unknown User"} on {format(new Date(claim.claim_date), "PPP")}
-                        </CardDescription>
-                      </div>
-                      <Badge className={getStatusColor(claim.status)}>
-                        {claim.status}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {claim.prize_amount && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Prize Amount:</span>
-                          <span className="font-semibold text-accent">£{claim.prize_amount.toFixed(2)}</span>
-                        </div>
-                      )}
-                      
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">Status</label>
-                        <Select
-                          value={claim.status}
-                          onValueChange={(value) => handleClaimAction(claim.id, value as "approved" | "rejected" | "pending")}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="approved">Approved</SelectItem>
-                            <SelectItem value="rejected">Rejected</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">Admin Notes</label>
-                        <Textarea
-                          value={editingNotes[claim.id] || ""}
-                          onChange={(e) => setEditingNotes({ ...editingNotes, [claim.id]: e.target.value })}
-                          placeholder="Add notes about this claim..."
-                          className="min-h-[80px]"
-                        />
-                        <Button
-                          onClick={() => handleNotesUpdate(claim.id)}
-                          variant="outline"
-                          size="sm"
-                          className="w-full"
-                        >
-                          Update Notes
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>User</TableHead>
+                        <TableHead>Course</TableHead>
+                        <TableHead>Hole</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Prize</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Notes</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {claims.map((claim) => (
+                        <TableRow key={claim.id}>
+                          <TableCell className="font-medium">
+                            {claim.profiles?.full_name || "Unknown User"}
+                          </TableCell>
+                          <TableCell>{getCourseName(claim.course_id)}</TableCell>
+                          <TableCell>{claim.hole_number}</TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {format(new Date(claim.claim_date), "PP")}
+                          </TableCell>
+                          <TableCell>
+                            {claim.prize_amount ? `£${claim.prize_amount.toFixed(2)}` : "-"}
+                          </TableCell>
+                          <TableCell>
+                            <Select
+                              value={claim.status}
+                              onValueChange={(value) => handleClaimAction(claim.id, value as "approved" | "rejected" | "pending")}
+                            >
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="approved">Approved</SelectItem>
+                                <SelectItem value="rejected">Rejected</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell className="max-w-xs">
+                            <Textarea
+                              value={editingNotes[claim.id] || ""}
+                              onChange={(e) => setEditingNotes({ ...editingNotes, [claim.id]: e.target.value })}
+                              placeholder="Add notes..."
+                              className="min-h-[60px] text-sm"
+                            />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              onClick={() => handleNotesUpdate(claim.id)}
+                              variant="outline"
+                              size="sm"
+                            >
+                              <Save className="w-4 h-4 mr-1" />
+                              Save
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             )}
           </TabsContent>
 
