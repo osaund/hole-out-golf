@@ -48,16 +48,18 @@ export const SubscribeDialog = ({ open, onOpenChange }: SubscribeDialogProps) =>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Subscription Required</AlertDialogTitle>
-          <AlertDialogDescription className="space-y-3">
-            <p>To play at our partner courses and compete for prizes, you need an active subscription.</p>
-            <div className="bg-muted p-4 rounded-lg">
-              <p className="font-semibold text-foreground mb-2">Monthly Subscription - £9.99/month</p>
-              <ul className="space-y-1 text-sm">
-                <li>✓ Unlimited shots at all partner courses</li>
-                <li>✓ Enter all prize draws</li>
-                <li>✓ Track your shot history</li>
-                <li>✓ Priority support</li>
-              </ul>
+          <AlertDialogDescription asChild>
+            <div className="space-y-3">
+              <p>To play at our partner courses and compete for prizes, you need an active subscription.</p>
+              <div className="bg-muted p-4 rounded-lg">
+                <p className="font-semibold text-foreground mb-2">Monthly Subscription - £9.99/month</p>
+                <ul className="space-y-1 text-sm">
+                  <li>✓ Unlimited shots at all partner courses</li>
+                  <li>✓ Enter all prize draws</li>
+                  <li>✓ Track your shot history</li>
+                  <li>✓ Priority support</li>
+                </ul>
+              </div>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
