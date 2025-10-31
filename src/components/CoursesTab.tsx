@@ -118,8 +118,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
             </div>
           )}
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-primary" />
+            <CardTitle>
               {course.name}
             </CardTitle>
             <CardDescription className="flex items-center gap-1">
