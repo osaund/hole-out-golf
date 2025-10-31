@@ -50,6 +50,31 @@ const Dashboard = () => {
     }
   }, [session]);
 
+  useEffect(() => {
+    if (!session) return;
+
+    // Set up realtime subscription for shots
+    const shotsChannel = supabase
+      .channel('shots-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'shots',
+          filter: `user_id=eq.${session.user.id}`
+        },
+        () => {
+          fetchData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(shotsChannel);
+    };
+  }, [session]);
+
   const fetchData = async () => {
     const { data: coursesData } = await supabase.from("courses").select("*");
     const { data: claimsData } = await supabase
