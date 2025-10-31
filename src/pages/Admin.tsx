@@ -5,11 +5,13 @@ import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, DollarSign, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import { Trophy, DollarSign, CheckCircle, XCircle, ArrowLeft, RotateCcw } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -18,6 +20,7 @@ export default function Admin() {
   const [claims, setClaims] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
   const [prizeAmounts, setPrizeAmounts] = useState<{ [key: string]: string }>({});
+  const [editingNotes, setEditingNotes] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -47,6 +50,11 @@ export default function Admin() {
     } else {
       console.log("Claims fetched:", claimsData.data);
       setClaims(claimsData.data || []);
+      const notes: { [key: string]: string } = {};
+      (claimsData.data || []).forEach((claim) => {
+        notes[claim.id] = claim.notes || "";
+      });
+      setEditingNotes(notes);
     }
 
     if (coursesData.error) {
@@ -61,7 +69,7 @@ export default function Admin() {
     }
   };
 
-  const handleClaimAction = async (claimId: string, status: "approved" | "rejected") => {
+  const handleClaimAction = async (claimId: string, status: "approved" | "rejected" | "pending") => {
     const { error } = await supabase
       .from("prize_claims")
       .update({ status })
@@ -77,6 +85,29 @@ export default function Admin() {
       toast({
         title: "Success",
         description: `Claim ${status} successfully`,
+      });
+      fetchData();
+    }
+  };
+
+  const handleNotesUpdate = async (claimId: string) => {
+    const notes = editingNotes[claimId];
+    
+    const { error } = await supabase
+      .from("prize_claims")
+      .update({ notes })
+      .eq("id", claimId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Notes updated successfully",
       });
       fetchData();
     }
@@ -205,31 +236,41 @@ export default function Admin() {
                           <span className="font-semibold text-accent">£{claim.prize_amount.toFixed(2)}</span>
                         </div>
                       )}
-                      {claim.notes && (
-                        <div className="pt-3 border-t">
-                          <p className="text-sm text-muted-foreground">{claim.notes}</p>
-                        </div>
-                      )}
-                      {claim.status === "pending" && (
-                        <div className="flex gap-2 pt-3 border-t">
-                          <Button
-                            onClick={() => handleClaimAction(claim.id, "approved")}
-                            className="flex-1"
-                            variant="default"
-                          >
-                            <CheckCircle className="w-4 h-4 mr-2" />
-                            Approve
-                          </Button>
-                          <Button
-                            onClick={() => handleClaimAction(claim.id, "rejected")}
-                            className="flex-1"
-                            variant="destructive"
-                          >
-                            <XCircle className="w-4 h-4 mr-2" />
-                            Reject
-                          </Button>
-                        </div>
-                      )}
+                      
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Status</label>
+                        <Select
+                          value={claim.status}
+                          onValueChange={(value) => handleClaimAction(claim.id, value as "approved" | "rejected" | "pending")}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="approved">Approved</SelectItem>
+                            <SelectItem value="rejected">Rejected</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Admin Notes</label>
+                        <Textarea
+                          value={editingNotes[claim.id] || ""}
+                          onChange={(e) => setEditingNotes({ ...editingNotes, [claim.id]: e.target.value })}
+                          placeholder="Add notes about this claim..."
+                          className="min-h-[80px]"
+                        />
+                        <Button
+                          onClick={() => handleNotesUpdate(claim.id)}
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                        >
+                          Update Notes
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
