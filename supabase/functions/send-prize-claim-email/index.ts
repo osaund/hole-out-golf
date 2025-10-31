@@ -13,8 +13,9 @@ interface PrizeClaimEmailRequest {
   courseName: string;
   userEmail: string;
   userName: string;
-  holeNumber: number;
-  videoUrl?: string;
+  teeTime?: string;
+  notes?: string;
+  claimDate: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -23,9 +24,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { courseName, userEmail, userName, holeNumber, videoUrl }: PrizeClaimEmailRequest = await req.json();
+    const { courseName, userEmail, userName, teeTime, notes, claimDate }: PrizeClaimEmailRequest = await req.json();
 
-    console.log("Sending prize claim email:", { courseName, userEmail, userName, holeNumber });
+    console.log("Sending prize claim email:", { courseName, userEmail, userName, teeTime, notes, claimDate });
 
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -41,9 +42,11 @@ const handler = async (req: Request): Promise<Response> => {
           <h1>New Hole-in-One Prize Claim</h1>
           <h2>Claim Details</h2>
           <p><strong>Course:</strong> ${courseName}</p>
-          <p><strong>Player:</strong> ${userName} (${userEmail})</p>
-          <p><strong>Hole Number:</strong> ${holeNumber}</p>
-          ${videoUrl ? `<p><strong>Video URL:</strong> <a href="${videoUrl}">${videoUrl}</a></p>` : ''}
+          <p><strong>Player:</strong> ${userName}</p>
+          <p><strong>Email:</strong> ${userEmail}</p>
+          <p><strong>Date:</strong> ${new Date(claimDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          ${teeTime ? `<p><strong>Tee Time:</strong> ${teeTime}</p>` : ''}
+          ${notes ? `<p><strong>Additional Notes:</strong><br/>${notes}</p>` : ''}
           <hr/>
           <p>This claim requires review and approval in the admin panel.</p>
         `,

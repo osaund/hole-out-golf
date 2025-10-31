@@ -122,8 +122,9 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
             courseName: selectedCourse?.name,
             userEmail: user?.email,
             userName: profile?.full_name || user?.email,
-            holeNumber: 1,
-            videoUrl: null,
+            teeTime: teeTime,
+            notes: notes,
+            claimDate: finalDate.toISOString(),
           }
         });
       } catch (emailError) {
