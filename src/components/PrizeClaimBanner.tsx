@@ -10,7 +10,7 @@ export const PrizeClaimBanner = ({ onOpenForm }: PrizeClaimBannerProps) => {
     <div className="bg-gradient-prize rounded-xl p-4 md:p-6 shadow-card mb-6">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
         <div className="text-center sm:text-left">
-          <h2 className="text-xl md:text-2xl font-bold text-secondary-foreground">Got a hole in one?</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-secondary-foreground">Got a hole in one?! 🎉</h2>
         </div>
         <Button
           size="sm"
