@@ -52,6 +52,25 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
     }
 
     try {
+      // Check if user already has a shot for this course today
+      const today = new Date().toISOString().split('T')[0];
+      const { data: existingShots } = await supabase
+        .from("shots")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("course_id", course.id)
+        .gte("created_at", `${today}T00:00:00`)
+        .lt("created_at", `${today}T23:59:59`);
+
+      if (existingShots && existingShots.length > 0) {
+        toast({
+          title: "Already Played Today",
+          description: `You've already logged a shot at ${course.name} today. Come back tomorrow!`,
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Log the shot
       const { error } = await supabase.from("shots").insert({
         user_id: user.id,
@@ -67,9 +86,13 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
         description: `Your shot at ${course.name} has been recorded.`,
       });
     } catch (error: any) {
+      const errorMessage = error.message.includes("unique_shot_per_course_per_day")
+        ? `You've already played at ${course.name} today. Try again tomorrow!`
+        : error.message;
+      
       toast({
         title: "Error",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     }

@@ -44,12 +44,6 @@ export const ShotsTab = ({ shots, courses }: ShotsTabProps) => {
               )}
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium">Hole #{shot.hole_number}</span>
-            </div>
-          </CardContent>
         </Card>
       ))}
     </div>
