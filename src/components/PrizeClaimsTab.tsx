@@ -12,11 +12,11 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "approved":
-        return "bg-success text-success-foreground";
+        return "bg-green-500 text-white border-green-600";
       case "rejected":
-        return "bg-destructive text-destructive-foreground";
+        return "bg-red-500 text-white border-red-600";
       default:
-        return "bg-secondary text-secondary-foreground";
+        return "bg-amber-500 text-white border-amber-600";
     }
   };
 
@@ -38,7 +38,7 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {claims.map((claim) => (
-        <Card key={claim.id} className="shadow-card hover:shadow-soft transition-all border-0 bg-card/50 backdrop-blur-sm overflow-hidden">
+        <Card key={claim.id} className="shadow-card hover:shadow-soft transition-all border border-border/50 bg-card overflow-hidden">
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -53,7 +53,7 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
                   </div>
                 </div>
               </div>
-              <Badge className={getStatusColor(claim.status)} variant="secondary">
+              <Badge className={`${getStatusColor(claim.status)} px-3 py-1 text-xs font-semibold uppercase tracking-wide border`}>
                 {claim.status}
               </Badge>
             </div>
