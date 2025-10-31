@@ -7,10 +7,10 @@ interface PrizeClaimBannerProps {
 
 export const PrizeClaimBanner = ({ onOpenForm }: PrizeClaimBannerProps) => {
   return (
-    <div className="bg-gradient-prize rounded-xl p-4 md:p-6 shadow-card mb-6">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+    <div className="bg-gradient-prize rounded-xl p-3 md:p-4 shadow-card mb-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
         <div className="text-center sm:text-left">
-          <h2 className="text-xl md:text-2xl font-bold text-secondary-foreground">Got a hole in one?! 🎉</h2>
+          <h2 className="text-lg md:text-xl font-bold text-secondary-foreground">Got a hole in one?! 🎉</h2>
         </div>
         <Button
           size="sm"
