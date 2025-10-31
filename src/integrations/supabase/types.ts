@@ -16,22 +16,28 @@ export type Database = {
     Tables: {
       courses: {
         Row: {
+          coming_soon: boolean | null
           created_at: string
           id: string
+          image_url: string | null
           location: string | null
           name: string
           par_3_count: number | null
         }
         Insert: {
+          coming_soon?: boolean | null
           created_at?: string
           id?: string
+          image_url?: string | null
           location?: string | null
           name: string
           par_3_count?: number | null
         }
         Update: {
+          coming_soon?: boolean | null
           created_at?: string
           id?: string
+          image_url?: string | null
           location?: string | null
           name?: string
           par_3_count?: number | null
