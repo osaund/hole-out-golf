@@ -109,25 +109,36 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card shadow-soft">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Hole Out Golf Logo" className="w-10 h-10 object-contain" />
-            <h1 className="text-2xl font-bold">Hole Out Golf</h1>
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0" />
+            <h1 className="text-lg sm:text-2xl font-bold truncate">Hole Out Golf</h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             {isAdmin && (
-              <Button variant="ghost" onClick={() => navigate("/admin")}>
-                <Shield className="w-4 h-4 mr-2" />
-                Admin
+              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="hidden sm:flex">
+                <Shield className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Admin</span>
               </Button>
             )}
-            <Button variant="ghost" onClick={() => navigate("/settings")}>
-              <SettingsIcon className="w-4 h-4 mr-2" />
-              Settings
+            {isAdmin && (
+              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="sm:hidden">
+                <Shield className="w-4 h-4" />
+              </Button>
+            )}
+            <Button variant="ghost" size="sm" onClick={() => navigate("/settings")} className="hidden sm:flex">
+              <SettingsIcon className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Settings</span>
             </Button>
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
+            <Button variant="ghost" size="sm" onClick={() => navigate("/settings")} className="sm:hidden">
+              <SettingsIcon className="w-4 h-4" />
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleLogout} className="hidden sm:flex">
+              <LogOut className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Logout</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleLogout} className="sm:hidden">
+              <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </div>
