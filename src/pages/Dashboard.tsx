@@ -107,20 +107,20 @@ const Dashboard = () => {
         <Tabs defaultValue="courses" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="courses">Courses</TabsTrigger>
-            <TabsTrigger value="claims">Prize Claims</TabsTrigger>
             <TabsTrigger value="shots">Shots</TabsTrigger>
+            <TabsTrigger value="claims">Prize Claims</TabsTrigger>
           </TabsList>
 
           <TabsContent value="courses">
             <CoursesTab courses={courses} />
           </TabsContent>
 
-          <TabsContent value="claims">
-            <PrizeClaimsTab claims={prizeClaims} courses={courses} />
-          </TabsContent>
-
           <TabsContent value="shots">
             <ShotsTab shots={shots} courses={courses} />
+          </TabsContent>
+
+          <TabsContent value="claims">
+            <PrizeClaimsTab claims={prizeClaims} courses={courses} />
           </TabsContent>
         </Tabs>
       </main>
