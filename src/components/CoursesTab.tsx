@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Target, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { SubscribeDialog } from "@/components/SubscribeDialog";
+import { supabase } from "@/integrations/supabase/client";
 import salisburyGolf from "@/assets/salisbury-golf.jpg";
 import biburyGolf from "@/assets/bibury-golf.jpg";
 import gratelyGolf from "@/assets/grately-golf.jpg";
@@ -28,17 +32,52 @@ const courseImages: Record<string, string> = {
 
 export const CoursesTab = ({ courses }: CoursesTabProps) => {
   const { toast } = useToast();
+  const { subscribed, user } = useSubscription();
+  const [subscribeDialogOpen, setSubscribeDialogOpen] = useState(false);
   const sortedCourses = sortCourses(courses);
 
-  const handlePlayNow = (courseName: string) => {
-    toast({
-      title: "Starting Game",
-      description: `Preparing to play at ${courseName}...`,
-    });
+  const handlePlayNow = async (course: any) => {
+    if (!subscribed) {
+      setSubscribeDialogOpen(true);
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Not authenticated",
+        description: "Please log in to play",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Log the shot
+      const { error } = await supabase.from("shots").insert({
+        user_id: user.id,
+        course_id: course.id,
+        hole_number: 1, // Default to hole 1 for now
+        is_hole_in_one: false,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Shot Logged!",
+        description: `Your shot at ${course.name} has been recorded.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {sortedCourses.map((course) => (
         <Card key={course.id} className="shadow-soft hover:shadow-card transition-all overflow-hidden">
           {course.image_url && (
@@ -74,7 +113,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
             )}
             {!course.coming_soon && (
               <Button
-                onClick={() => handlePlayNow(course.name)}
+                onClick={() => handlePlayNow(course)}
                 className="w-full"
                 size="lg"
               >
@@ -95,6 +134,8 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
           </CardContent>
         </Card>
       ))}
-    </div>
+      </div>
+      <SubscribeDialog open={subscribeDialogOpen} onOpenChange={setSubscribeDialogOpen} />
+    </>
   );
 };

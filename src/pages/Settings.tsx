@@ -9,12 +9,14 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, User, CreditCard, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 
 const Settings = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const { subscribed, checkSubscription } = useSubscription();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -89,12 +91,51 @@ const Settings = () => {
   };
 
   const handleManageSubscription = async () => {
-    toast({
-      title: "Subscription Management",
-      description: "Opening subscription portal...",
-    });
-    // This would typically redirect to Stripe Customer Portal
-    // For now, it's a placeholder for the subscription management flow
+    if (!subscribed) {
+      // Redirect to create checkout
+      try {
+        const { data, error } = await supabase.functions.invoke("create-checkout", {
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        });
+
+        if (error) throw error;
+
+        if (data?.url) {
+          window.open(data.url, "_blank");
+          // Check subscription after a delay to allow for checkout completion
+          setTimeout(checkSubscription, 5000);
+        }
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } else {
+      // Open customer portal
+      try {
+        const { data, error } = await supabase.functions.invoke("customer-portal", {
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        });
+
+        if (error) throw error;
+
+        if (data?.url) {
+          window.open(data.url, "_blank");
+        }
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   if (!session) {
@@ -172,36 +213,55 @@ const Settings = () => {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-semibold">Current Plan</h3>
-                  <p className="text-sm text-muted-foreground">Free Trial</p>
+                  <p className="text-sm text-muted-foreground">
+                    {subscribed ? "Monthly Subscription" : "Free Trial"}
+                  </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-accent">£0</p>
+                  <p className="text-2xl font-bold text-accent">
+                    {subscribed ? "£9.99" : "£0"}
+                  </p>
                   <p className="text-sm text-muted-foreground">per month</p>
                 </div>
               </div>
               
               <ul className="space-y-2 mb-4">
-                <li className="flex items-center gap-2 text-sm">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                  Unlimited shots at partner courses
-                </li>
-                <li className="flex items-center gap-2 text-sm">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                  Prize claim submissions
-                </li>
-                <li className="flex items-center gap-2 text-sm">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                  Shot history tracking
-                </li>
+                {subscribed ? (
+                  <>
+                    <li className="flex items-center gap-2 text-sm">
+                      <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
+                      Unlimited shots at partner courses
+                    </li>
+                    <li className="flex items-center gap-2 text-sm">
+                      <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
+                      Prize claim submissions
+                    </li>
+                    <li className="flex items-center gap-2 text-sm">
+                      <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
+                      Shot history tracking
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full"></span>
+                      View courses only
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full"></span>
+                      No shot logging
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
 
             <Button 
-              variant="outline" 
+              variant={subscribed ? "outline" : "default"}
               className="w-full"
               onClick={handleManageSubscription}
             >
-              Upgrade to Premium
+              {subscribed ? "Manage Subscription" : "Subscribe Now - £9.99/month"}
             </Button>
 
             <p className="text-xs text-muted-foreground text-center">
