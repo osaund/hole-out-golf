@@ -55,10 +55,14 @@ export const AuthForm = () => {
         if (error) throw error;
 
         toast({
-          title: "Account created!",
-          description: "You've successfully signed up.",
+          title: "Check your email!",
+          description: "We've sent you a verification link. Please check your email to verify your account before signing in.",
         });
-        navigate("/");
+        setEmail("");
+        setPassword("");
+        setFirstName("");
+        setLastName("");
+        setPhone("");
       }
     } catch (error: any) {
       toast({
