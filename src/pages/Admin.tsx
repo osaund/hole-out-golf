@@ -1,108 +1,109 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useUserRole } from "@/hooks/useUserRole";
+import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, DollarSign, ArrowLeft } from "lucide-react";
+import { Trophy, DollarSign, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 
-const Admin = () => {
+export default function Admin() {
   const navigate = useNavigate();
-  const { isAdmin, loading: roleLoading } = useUserRole();
+  const { isAdmin, loading } = useAdminCheck();
   const { toast } = useToast();
   const [claims, setClaims] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [prizeAmounts, setPrizeAmounts] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-    if (!roleLoading && !isAdmin) {
+    if (!loading && !isAdmin) {
       navigate("/");
-      return;
     }
+  }, [isAdmin, loading, navigate]);
 
+  useEffect(() => {
     if (isAdmin) {
       fetchData();
     }
-  }, [isAdmin, roleLoading, navigate]);
+  }, [isAdmin]);
 
   const fetchData = async () => {
-    try {
-      const [claimsRes, coursesRes] = await Promise.all([
-        supabase
-          .from("prize_claims")
-          .select("*, profiles(full_name)")
-          .order("created_at", { ascending: false }),
-        supabase.from("courses").select("*").order("name"),
-      ]);
+    const [claimsData, coursesData] = await Promise.all([
+      supabase.from("prize_claims").select("*, profiles(full_name)").order("created_at", { ascending: false }),
+      supabase.from("courses").select("*").order("name"),
+    ]);
 
-      if (claimsRes.error) throw claimsRes.error;
-      if (coursesRes.error) throw coursesRes.error;
-
-      setClaims(claimsRes.data || []);
-      setCourses(coursesRes.data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error fetching data",
-        description: error.message,
-        variant: "destructive",
+    if (claimsData.data) setClaims(claimsData.data);
+    if (coursesData.data) {
+      setCourses(coursesData.data);
+      const amounts: { [key: string]: string } = {};
+      coursesData.data.forEach((course) => {
+        amounts[course.id] = course.prize_amount?.toString() || "0";
       });
-    } finally {
-      setLoading(false);
+      setPrizeAmounts(amounts);
     }
   };
 
-  const updateClaimStatus = async (claimId: string, status: string) => {
-    try {
-      const { error } = await supabase
-        .from("prize_claims")
-        .update({ status })
-        .eq("id", claimId);
+  const handleClaimAction = async (claimId: string, status: "approved" | "rejected") => {
+    const { error } = await supabase
+      .from("prize_claims")
+      .update({ status })
+      .eq("id", claimId);
 
-      if (error) throw error;
-
+    if (error) {
       toast({
-        title: "Claim updated",
-        description: `Prize claim ${status} successfully.`,
-      });
-
-      fetchData();
-    } catch (error: any) {
-      toast({
-        title: "Error updating claim",
+        title: "Error",
         description: error.message,
         variant: "destructive",
       });
+    } else {
+      toast({
+        title: "Success",
+        description: `Claim ${status} successfully`,
+      });
+      fetchData();
     }
   };
 
-  const updatePrizeAmount = async (courseId: string, amount: number) => {
-    try {
-      const { error } = await supabase
-        .from("courses")
-        .update({ prize_amount: amount })
-        .eq("id", courseId);
-
-      if (error) throw error;
-
+  const handlePrizeAmountUpdate = async (courseId: string) => {
+    const amount = parseFloat(prizeAmounts[courseId]);
+    
+    if (isNaN(amount) || amount < 0) {
       toast({
-        title: "Prize amount updated",
-        description: "Course prize pot updated successfully.",
+        title: "Invalid Amount",
+        description: "Please enter a valid prize amount",
+        variant: "destructive",
       });
+      return;
+    }
 
-      fetchData();
-    } catch (error: any) {
+    const { error } = await supabase
+      .from("courses")
+      .update({ prize_amount: amount })
+      .eq("id", courseId);
+
+    if (error) {
       toast({
-        title: "Error updating prize amount",
+        title: "Error",
         description: error.message,
         variant: "destructive",
       });
+    } else {
+      toast({
+        title: "Success",
+        description: "Prize amount updated successfully",
+      });
+      fetchData();
     }
+  };
+
+  const getCourseName = (courseId: string) => {
+    const course = courses.find((c) => c.id === courseId);
+    return course ? course.name : "Unknown Course";
   };
 
   const getStatusColor = (status: string) => {
@@ -116,15 +117,13 @@ const Admin = () => {
     }
   };
 
-  const getCourseName = (courseId: string) => {
-    const course = courses.find((c) => c.id === courseId);
-    return course ? course.name : "Unknown Course";
-  };
-
-  if (roleLoading || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+        <div className="text-center">
+          <Trophy className="w-12 h-12 mx-auto mb-4 text-muted-foreground animate-pulse" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
       </div>
     );
   }
@@ -134,20 +133,26 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background p-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage prize claims and prize pots</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      <div className="container mx-auto p-4 max-w-7xl">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/")}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+              <p className="text-muted-foreground">Manage prize claims and course settings</p>
+            </div>
           </div>
         </div>
 
         <Tabs defaultValue="claims" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList>
             <TabsTrigger value="claims">Prize Claims</TabsTrigger>
             <TabsTrigger value="prizes">Prize Pots</TabsTrigger>
           </TabsList>
@@ -165,15 +170,13 @@ const Admin = () => {
                 <Card key={claim.id} className="shadow-soft">
                   <CardHeader>
                     <div className="flex items-start justify-between">
-                      <div>
+                      <div className="flex-1">
                         <CardTitle className="flex items-center gap-2">
                           <Trophy className="w-5 h-5 text-accent" />
                           {getCourseName(claim.course_id)} - Hole {claim.hole_number}
                         </CardTitle>
-                        <CardDescription className="mt-1">
-                          Player: {claim.profiles?.full_name || "Unknown"}
-                          <br />
-                          Claimed: {format(new Date(claim.claim_date), "PPP")}
+                        <CardDescription>
+                          Claimed by: {claim.profiles?.full_name || "Unknown User"} on {format(new Date(claim.claim_date), "PPP")}
                         </CardDescription>
                       </div>
                       <Badge className={getStatusColor(claim.status)}>
@@ -182,13 +185,11 @@ const Admin = () => {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {claim.prize_amount && (
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Prize Amount:</span>
-                          <span className="font-semibold text-accent">
-                            £{claim.prize_amount.toFixed(2)}
-                          </span>
+                          <span className="font-semibold text-accent">£{claim.prize_amount.toFixed(2)}</span>
                         </div>
                       )}
                       {claim.notes && (
@@ -199,18 +200,19 @@ const Admin = () => {
                       {claim.status === "pending" && (
                         <div className="flex gap-2 pt-3 border-t">
                           <Button
-                            size="sm"
-                            onClick={() => updateClaimStatus(claim.id, "approved")}
+                            onClick={() => handleClaimAction(claim.id, "approved")}
                             className="flex-1"
+                            variant="default"
                           >
+                            <CheckCircle className="w-4 h-4 mr-2" />
                             Approve
                           </Button>
                           <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => updateClaimStatus(claim.id, "rejected")}
+                            onClick={() => handleClaimAction(claim.id, "rejected")}
                             className="flex-1"
+                            variant="destructive"
                           >
+                            <XCircle className="w-4 h-4 mr-2" />
                             Reject
                           </Button>
                         </div>
@@ -230,31 +232,28 @@ const Admin = () => {
                     <DollarSign className="w-5 h-5 text-accent" />
                     {course.name}
                   </CardTitle>
-                  <CardDescription>{course.location}</CardDescription>
+                  <CardDescription>{course.location || "No location set"}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-end gap-3">
-                      <div className="flex-1">
-                        <Label htmlFor={`prize-${course.id}`}>Prize Pot (£)</Label>
-                        <Input
-                          id={`prize-${course.id}`}
-                          type="number"
-                          step="0.01"
-                          defaultValue={course.prize_amount || 0}
-                          onBlur={(e) => {
-                            const value = parseFloat(e.target.value);
-                            if (!isNaN(value) && value !== course.prize_amount) {
-                              updatePrizeAmount(course.id, value);
-                            }
-                          }}
-                        />
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Current: £{(course.prize_amount || 0).toFixed(2)}
-                      </div>
-                    </div>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={prizeAmounts[course.id] || ""}
+                      onChange={(e) =>
+                        setPrizeAmounts({ ...prizeAmounts, [course.id]: e.target.value })
+                      }
+                      placeholder="Enter prize amount"
+                      className="flex-1"
+                    />
+                    <Button onClick={() => handlePrizeAmountUpdate(course.id)}>
+                      Update
+                    </Button>
                   </div>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Current: £{course.prize_amount?.toFixed(2) || "0.00"}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -263,6 +262,4 @@ const Admin = () => {
       </div>
     </div>
   );
-};
-
-export default Admin;
+}
