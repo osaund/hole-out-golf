@@ -1,1 +1,4 @@
 project_id = "vnxbkvphbjesmiriflxu"
+
+[functions.send-prize-claim-email]
+verify_jwt = false

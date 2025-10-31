@@ -94,6 +94,15 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       const selectedCourse = courses.find(c => c.id === finalCourseId);
       const prizeAmount = selectedCourse?.prize_amount || null;
 
+      // Get user profile for email
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", userId)
+        .single();
+
+      const { data: { user } } = await supabase.auth.getUser();
+
       const { error } = await supabase.from("prize_claims").insert({
         user_id: userId,
         course_id: finalCourseId,
@@ -105,6 +114,22 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       });
 
       if (error) throw error;
+
+      // Send email notification
+      try {
+        await supabase.functions.invoke('send-prize-claim-email', {
+          body: {
+            courseName: selectedCourse?.name,
+            userEmail: user?.email,
+            userName: profile?.full_name || user?.email,
+            holeNumber: 1,
+            videoUrl: null,
+          }
+        });
+      } catch (emailError) {
+        console.error("Failed to send email:", emailError);
+        // Don't fail the claim submission if email fails
+      }
 
       toast({
         title: "Claim Submitted!",
