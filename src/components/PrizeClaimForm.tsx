@@ -71,6 +71,25 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         throw new Error("Please select all required fields");
       }
 
+      // Check if user has already submitted a claim today
+      const today = new Date().toISOString().split('T')[0];
+      const { data: existingClaims } = await supabase
+        .from("prize_claims")
+        .select("id")
+        .eq("user_id", userId)
+        .gte("claim_date", `${today}T00:00:00`)
+        .lt("claim_date", `${today}T23:59:59`);
+
+      if (existingClaims && existingClaims.length > 0) {
+        toast({
+          title: "Already Submitted Today",
+          description: "You can only submit one prize claim per day. Try again tomorrow!",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.from("prize_claims").insert({
         user_id: userId,
         course_id: finalCourseId,
@@ -96,9 +115,13 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       setTeeTime("");
       onSuccess();
     } catch (error: any) {
+      const errorMessage = error.message.includes("unique_prize_claim_per_day")
+        ? "You can only submit one prize claim per day. Try again tomorrow!"
+        : error.message;
+      
       toast({
         title: "Error",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
