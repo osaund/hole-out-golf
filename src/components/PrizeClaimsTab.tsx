@@ -36,40 +36,40 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {claims.map((claim) => (
-        <Card key={claim.id} className="shadow-soft">
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-accent" />
-                  {getCourseName(claim.course_id)}
-                </CardTitle>
-                <CardDescription className="flex items-center gap-1 mt-1">
-                  <Calendar className="w-4 h-4" />
-                  {format(new Date(claim.claim_date), "PPP")}
-                </CardDescription>
+        <Card key={claim.id} className="shadow-card hover:shadow-soft transition-all border-0 bg-card/50 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-prize">
+                  <Trophy className="w-5 h-5 text-secondary-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">{getCourseName(claim.course_id)}</h3>
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
+                    <Calendar className="w-3.5 h-3.5" />
+                    {format(new Date(claim.claim_date), "PPP")}
+                  </div>
+                </div>
               </div>
-              <Badge className={getStatusColor(claim.status)}>
+              <Badge className={getStatusColor(claim.status)} variant="secondary">
                 {claim.status}
               </Badge>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {claim.prize_amount && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Prize Amount:</span>
-                  <span className="font-semibold text-accent">£{claim.prize_amount.toFixed(2)}</span>
-                </div>
-              )}
-              {claim.notes && (
-                <div className="mt-3 pt-3 border-t">
-                  <p className="text-sm text-muted-foreground">{claim.notes}</p>
-                </div>
-              )}
-            </div>
+            
+            {claim.prize_amount && (
+              <div className="bg-gradient-prize rounded-lg p-4 mb-3">
+                <p className="text-xs font-medium text-secondary-foreground/70 mb-1">Prize Amount</p>
+                <p className="text-2xl font-bold text-secondary">£{claim.prize_amount.toFixed(2)}</p>
+              </div>
+            )}
+            
+            {claim.notes && (
+              <div className="mt-3 p-3 rounded-lg bg-muted/50">
+                <p className="text-sm text-foreground/80">{claim.notes}</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}
