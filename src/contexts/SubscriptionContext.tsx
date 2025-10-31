@@ -27,7 +27,14 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const [loading, setLoading] = useState(true);
 
   const checkSubscription = async () => {
-    if (!session) {
+    if (!session || !user) {
+      setSubscribed(false);
+      return;
+    }
+
+    // Skip subscription check for unverified users
+    if (user.email_confirmed_at === null || user.email_confirmed_at === undefined) {
+      console.log("Skipping subscription check for unverified user");
       setSubscribed(false);
       return;
     }
