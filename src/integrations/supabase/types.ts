@@ -14,7 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      courses: {
+        Row: {
+          created_at: string
+          id: string
+          location: string | null
+          name: string
+          par_3_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location?: string | null
+          name: string
+          par_3_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location?: string | null
+          name?: string
+          par_3_count?: number | null
+        }
+        Relationships: []
+      }
+      prize_claims: {
+        Row: {
+          claim_date: string
+          course_id: string
+          created_at: string
+          hole_number: number
+          id: string
+          notes: string | null
+          prize_amount: number | null
+          shot_id: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          claim_date?: string
+          course_id: string
+          created_at?: string
+          hole_number: number
+          id?: string
+          notes?: string | null
+          prize_amount?: number | null
+          shot_id?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          claim_date?: string
+          course_id?: string
+          created_at?: string
+          hole_number?: number
+          id?: string
+          notes?: string | null
+          prize_amount?: number | null
+          shot_id?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prize_claims_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prize_claims_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      shots: {
+        Row: {
+          course_id: string
+          created_at: string
+          hole_number: number
+          id: string
+          is_hole_in_one: boolean | null
+          user_id: string
+          video_url: string | null
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          hole_number: number
+          id?: string
+          is_hole_in_one?: boolean | null
+          user_id: string
+          video_url?: string | null
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          hole_number?: number
+          id?: string
+          is_hole_in_one?: boolean | null
+          user_id?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shots_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
