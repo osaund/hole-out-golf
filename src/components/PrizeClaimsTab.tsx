@@ -41,16 +41,11 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
         <Card key={claim.id} className="shadow-card hover:shadow-soft transition-all border border-border/50 bg-card overflow-hidden">
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-prize">
-                  <Trophy className="w-5 h-5 text-secondary-foreground" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">{getCourseName(claim.course_id)}</h3>
-                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {format(new Date(claim.claim_date), "PPP")}
-                  </div>
+              <div>
+                <h3 className="font-semibold text-lg">{getCourseName(claim.course_id)}</h3>
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
+                  <Calendar className="w-3.5 h-3.5" />
+                  {format(new Date(claim.claim_date), "PPP")}
                 </div>
               </div>
               <Badge className={`${getStatusColor(claim.status)} px-3 py-1 text-xs font-semibold uppercase tracking-wide border`}>
