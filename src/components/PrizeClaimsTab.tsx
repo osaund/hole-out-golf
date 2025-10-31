@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Calendar } from "lucide-react";
+import { Trophy, Calendar, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 
 interface PrizeClaimsTabProps {
@@ -59,11 +59,17 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
           <CardContent>
             <div className="space-y-2">
               {claim.prize_amount && (
-                <div className="relative p-4 bg-gradient-prize rounded-lg overflow-hidden border border-primary/20">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5" />
+                <div className="relative p-5 rounded-xl overflow-hidden group">
+                  {/* Gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent via-secondary to-accent opacity-80" />
+                  
+                  {/* Content */}
                   <div className="relative z-10 flex justify-between items-center">
-                    <span className="text-sm font-semibold text-primary/80 uppercase tracking-wide">Prize Amount</span>
-                    <span className="text-2xl font-bold text-primary">£{claim.prize_amount.toFixed(2)}</span>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-accent-foreground" />
+                      <span className="text-sm font-bold text-accent-foreground uppercase tracking-wide">Prize Won</span>
+                    </div>
+                    <span className="text-3xl font-black text-accent-foreground">£{claim.prize_amount.toFixed(2)}</span>
                   </div>
                 </div>
               )}
