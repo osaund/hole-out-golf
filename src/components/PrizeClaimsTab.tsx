@@ -54,7 +54,7 @@ export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
             </div>
             
             {claim.prize_amount && (
-              <div className="bg-gradient-prize rounded-lg p-4 mb-3">
+              <div className="bg-gradient-prize rounded-lg p-4 mb-3 text-center">
                 <p className="text-xs font-medium text-secondary-foreground/70 mb-1">Prize Amount</p>
                 <p className="text-2xl font-bold text-secondary">£{claim.prize_amount.toFixed(2)}</p>
               </div>
