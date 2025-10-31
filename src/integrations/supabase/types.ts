@@ -52,7 +52,6 @@ export type Database = {
           claim_date: string
           course_id: string
           created_at: string
-          hole_number: number
           id: string
           notes: string | null
           prize_amount: number | null
@@ -64,7 +63,6 @@ export type Database = {
           claim_date?: string
           course_id: string
           created_at?: string
-          hole_number: number
           id?: string
           notes?: string | null
           prize_amount?: number | null
@@ -76,7 +74,6 @@ export type Database = {
           claim_date?: string
           course_id?: string
           created_at?: string
-          hole_number?: number
           id?: string
           notes?: string | null
           prize_amount?: number | null

@@ -97,7 +97,6 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       const { error } = await supabase.from("prize_claims").insert({
         user_id: userId,
         course_id: finalCourseId,
-        hole_number: 1, // Default value
         notes,
         status: "pending",
         claim_date: finalDate.toISOString(),

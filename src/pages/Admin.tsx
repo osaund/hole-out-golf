@@ -218,7 +218,6 @@ export default function Admin() {
                       <TableRow>
                         <TableHead>User</TableHead>
                         <TableHead>Course</TableHead>
-                        <TableHead>Hole</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Prize</TableHead>
                         <TableHead>Status</TableHead>
@@ -233,7 +232,6 @@ export default function Admin() {
                             {claim.profiles?.full_name || "Unknown User"}
                           </TableCell>
                           <TableCell>{getCourseName(claim.course_id)}</TableCell>
-                          <TableCell>{claim.hole_number}</TableCell>
                           <TableCell className="whitespace-nowrap">
                             {format(new Date(claim.claim_date), "PP")}
                           </TableCell>
