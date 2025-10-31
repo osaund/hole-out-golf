@@ -29,6 +29,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const checkSubscription = async () => {
     if (!session || !user) {
       setSubscribed(false);
+      setLoading(false);
       return;
     }
 
@@ -36,6 +37,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     if (user.email_confirmed_at === null || user.email_confirmed_at === undefined) {
       console.log("Skipping subscription check for unverified user");
       setSubscribed(false);
+      setLoading(false);
       return;
     }
 
@@ -51,6 +53,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     } catch (error) {
       console.error("Error checking subscription:", error);
       setSubscribed(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,7 +62,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
+      // Don't set loading to false here - wait for subscription check
     });
 
     const {
@@ -66,7 +70,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
+      // Don't set loading to false here - wait for subscription check
     });
 
     return () => subscription.unsubscribe();
