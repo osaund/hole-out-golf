@@ -9,9 +9,10 @@ import { PrizeClaimForm } from "@/components/PrizeClaimForm";
 import { CoursesTab } from "@/components/CoursesTab";
 import { PrizeClaimsTab } from "@/components/PrizeClaimsTab";
 import { ShotsTab } from "@/components/ShotsTab";
-import { LogOut, Trophy, Settings as SettingsIcon, Shield } from "lucide-react";
+import { LogOut, Settings as SettingsIcon, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
+import logo from "@/assets/logo.png";
 
 const Dashboard = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -85,9 +86,7 @@ const Dashboard = () => {
       <header className="border-b bg-card shadow-soft">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-hero rounded-full flex items-center justify-center">
-              <Trophy className="w-6 h-6 text-primary-foreground" />
-            </div>
+            <img src={logo} alt="Hole Out Golf Logo" className="w-10 h-10 object-contain" />
             <h1 className="text-2xl font-bold">Hole Out Golf</h1>
           </div>
           <div className="flex items-center gap-2">
