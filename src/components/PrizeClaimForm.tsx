@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -7,6 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 
 interface PrizeClaimFormProps {
   open: boolean;
@@ -21,19 +27,59 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
   const [holeNumber, setHoleNumber] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedShotId, setSelectedShotId] = useState("");
+  const [claimDate, setClaimDate] = useState<Date>();
+  const [teeTime, setTeeTime] = useState("");
+  const [recentShots, setRecentShots] = useState<any[]>([]);
   const { toast } = useToast();
+  const { subscribed } = useSubscription();
+
+  useEffect(() => {
+    if (open && subscribed) {
+      fetchRecentShots();
+    }
+  }, [open, subscribed]);
+
+  const fetchRecentShots = async () => {
+    const { data } = await supabase
+      .from("shots")
+      .select("*, courses(name, location)")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(5);
+    
+    setRecentShots(data || []);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      let finalCourseId = courseId;
+      let finalDate = claimDate;
+
+      // If subscribed and a shot is selected, use that shot's details
+      if (subscribed && selectedShotId) {
+        const selectedShot = recentShots.find(s => s.id === selectedShotId);
+        if (selectedShot) {
+          finalCourseId = selectedShot.course_id;
+          finalDate = new Date(selectedShot.created_at);
+        }
+      }
+
+      if (!finalCourseId || !finalDate) {
+        throw new Error("Please select all required fields");
+      }
+
       const { error } = await supabase.from("prize_claims").insert({
         user_id: userId,
-        course_id: courseId,
+        course_id: finalCourseId,
         hole_number: parseInt(holeNumber),
         notes,
         status: "pending",
+        claim_date: finalDate.toISOString(),
+        shot_id: subscribed ? selectedShotId : null,
       });
 
       if (error) throw error;
@@ -47,6 +93,9 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       setCourseId("");
       setHoleNumber("");
       setNotes("");
+      setSelectedShotId("");
+      setClaimDate(undefined);
+      setTeeTime("");
       onSuccess();
     } catch (error: any) {
       toast({
@@ -69,20 +118,77 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {subscribed ? (
+            <div className="space-y-2">
+              <Label htmlFor="shot">Select Recent Shot</Label>
+              <Select value={selectedShotId} onValueChange={setSelectedShotId} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a recent shot" />
+                </SelectTrigger>
+                <SelectContent>
+                  {recentShots.map((shot) => (
+                    <SelectItem key={shot.id} value={shot.id}>
+                      {shot.courses?.name} - {format(new Date(shot.created_at), "PPP")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="course">Golf Course</Label>
+                <Select value={courseId} onValueChange={setCourseId} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a course" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {courses.map((course) => (
+                      <SelectItem key={course.id} value={course.id}>
+                        {course.name} - {course.location}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Date of Shot</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !claimDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {claimDate ? format(claimDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={claimDate}
+                      onSelect={setClaimDate}
+                      disabled={(date) => date > new Date() || date < new Date("2024-01-01")}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </>
+          )}
           <div className="space-y-2">
-            <Label htmlFor="course">Golf Course</Label>
-            <Select value={courseId} onValueChange={setCourseId} required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a course" />
-              </SelectTrigger>
-              <SelectContent>
-                {courses.map((course) => (
-                  <SelectItem key={course.id} value={course.id}>
-                    {course.name} - {course.location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="teeTime">Tee Time</Label>
+            <Input
+              id="teeTime"
+              type="time"
+              value={teeTime}
+              onChange={(e) => setTeeTime(e.target.value)}
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="hole">Hole Number</Label>
