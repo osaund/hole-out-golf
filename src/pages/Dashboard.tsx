@@ -9,8 +9,9 @@ import { PrizeClaimForm } from "@/components/PrizeClaimForm";
 import { CoursesTab } from "@/components/CoursesTab";
 import { PrizeClaimsTab } from "@/components/PrizeClaimsTab";
 import { ShotsTab } from "@/components/ShotsTab";
-import { LogOut, Trophy, Settings as SettingsIcon } from "lucide-react";
+import { LogOut, Trophy, Settings as SettingsIcon, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const Dashboard = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -20,6 +21,7 @@ const Dashboard = () => {
   const [formOpen, setFormOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAdmin } = useUserRole();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -89,6 +91,12 @@ const Dashboard = () => {
             <h1 className="text-2xl font-bold">Hole Out Golf</h1>
           </div>
           <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Button variant="ghost" onClick={() => navigate("/admin")}>
+                <Shield className="w-4 h-4 mr-2" />
+                Admin
+              </Button>
+            )}
             <Button variant="ghost" onClick={() => navigate("/settings")}>
               <SettingsIcon className="w-4 h-4 mr-2" />
               Settings
