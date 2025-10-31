@@ -11,7 +11,7 @@ export const PrizeClaimBanner = ({ onOpenForm }: PrizeClaimBannerProps) => {
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-background/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-            <Trophy className="w-8 h-8 text-secondary-foreground" />
+            <Trophy className="w-8 h-8 text-yellow-500" />
           </div>
           <div>
             <h2 className="text-3xl font-bold text-secondary-foreground mb-1">Win Cash Prizes!</h2>
