@@ -99,6 +99,13 @@ export type Database = {
             referencedRelation: "shots"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "prize_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
