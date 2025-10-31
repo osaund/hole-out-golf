@@ -128,7 +128,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             {!course.coming_soon && course.prize_amount && (
-              <div className="p-4 bg-gradient-prize rounded-lg text-center border-2 border-secondary/30 shadow-md">
+              <div className="p-4 bg-gradient-prize rounded-lg text-center">
                 <p className="text-sm font-medium text-secondary-foreground/80 mb-1">Prize Pool</p>
                 <p className="text-3xl font-bold text-secondary-foreground">£{course.prize_amount.toLocaleString()}</p>
               </div>
@@ -136,7 +136,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
             {!course.coming_soon && (
               <Button
                 onClick={() => handlePlayNow(course)}
-                className="w-full hover:bg-secondary hover:text-secondary-foreground transition-colors"
+                className="w-full"
                 size="lg"
               >
                 <Play className="w-4 h-4 mr-2" />
