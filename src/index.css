@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 95 40% 15%;
 
-    --primary: 95 45% 25%;
+    --primary: 95 35% 35%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 48 96% 53%;
@@ -34,18 +34,18 @@ All colors MUST be HSL.
 
     --border: 95 20% 88%;
     --input: 95 20% 88%;
-    --ring: 95 45% 25%;
+    --ring: 95 35% 35%;
 
     --radius: 0.75rem;
     
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
     
-    --gradient-hero: linear-gradient(135deg, hsl(95 45% 25%), hsl(95 55% 35%));
+    --gradient-hero: linear-gradient(135deg, hsl(95 35% 35%), hsl(95 40% 45%));
     --gradient-prize: linear-gradient(135deg, hsl(48 96% 53%), hsl(45 90% 60%));
     
-    --shadow-soft: 0 4px 20px -4px hsl(95 45% 25% / 0.1);
-    --shadow-card: 0 8px 30px -6px hsl(95 45% 25% / 0.15);
+    --shadow-soft: 0 4px 20px -4px hsl(95 35% 35% / 0.1);
+    --shadow-card: 0 8px 30px -6px hsl(95 35% 35% / 0.15);
 
     --sidebar-background: 0 0% 98%;
 
@@ -74,7 +74,7 @@ All colors MUST be HSL.
     --popover: 95 30% 10%;
     --popover-foreground: 95 20% 95%;
 
-    --primary: 95 50% 45%;
+    --primary: 95 40% 50%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 48 96% 53%;
@@ -91,12 +91,12 @@ All colors MUST be HSL.
 
     --border: 95 20% 20%;
     --input: 95 20% 20%;
-    --ring: 95 50% 45%;
+    --ring: 95 40% 50%;
     
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
     
-    --gradient-hero: linear-gradient(135deg, hsl(95 50% 35%), hsl(95 60% 45%));
+    --gradient-hero: linear-gradient(135deg, hsl(95 40% 40%), hsl(95 45% 55%));
     --gradient-prize: linear-gradient(135deg, hsl(48 96% 53%), hsl(45 90% 60%));
     
     --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
