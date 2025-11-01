@@ -12,6 +12,7 @@ import { ShotsTab } from "@/components/ShotsTab";
 import { LogOut, UserCircle, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
+import { ThemeToggle, ThemeToggleMobile } from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
 
 const Dashboard = () => {
@@ -115,6 +116,8 @@ const Dashboard = () => {
             <h1 className="text-lg sm:text-2xl font-bold truncate">Hole Out Golf</h1>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+            <ThemeToggle />
+            <ThemeToggleMobile />
             {isAdmin && (
               <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="hidden sm:flex">
                 <Shield className="w-4 h-4 sm:mr-2" />
