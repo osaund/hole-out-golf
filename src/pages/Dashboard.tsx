@@ -9,7 +9,7 @@ import { PrizeClaimForm } from "@/components/PrizeClaimForm";
 import { CoursesTab } from "@/components/CoursesTab";
 import { PrizeClaimsTab } from "@/components/PrizeClaimsTab";
 import { ShotsTab } from "@/components/ShotsTab";
-import { LogOut, Settings as SettingsIcon, Shield } from "lucide-react";
+import { LogOut, UserCircle, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
 import logo from "@/assets/logo.png";
@@ -127,11 +127,11 @@ const Dashboard = () => {
               </Button>
             )}
             <Button variant="ghost" size="sm" onClick={() => navigate("/settings")} className="hidden sm:flex">
-              <SettingsIcon className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">Settings</span>
+              <UserCircle className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Profile</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate("/settings")} className="sm:hidden">
-              <SettingsIcon className="w-4 h-4" />
+              <UserCircle className="w-4 h-4" />
             </Button>
             <Button variant="outline" size="sm" onClick={handleLogout} className="hidden sm:flex">
               <LogOut className="w-4 h-4 sm:mr-2" />

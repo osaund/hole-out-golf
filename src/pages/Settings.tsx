@@ -7,15 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, User, CreditCard, Mail } from "lucide-react";
+import { ArrowLeft, UserCircle, CreditCard, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 
 const Settings = () => {
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<any>(null);
-  const [fullName, setFullName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const { subscribed, renewalDate, checkSubscription, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -49,46 +48,10 @@ const Settings = () => {
   const fetchProfile = async () => {
     if (!session) return;
     
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", session.user.id)
-      .single();
-
-    if (data) {
-      setProfile(data);
-      setFullName(data.full_name || "");
-    }
+    setFirstName(session.user.user_metadata?.first_name || "");
+    setLastName(session.user.user_metadata?.last_name || "");
   };
 
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!session) return;
-    
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ full_name: fullName })
-        .eq("id", session.user.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been updated successfully.",
-      });
-      fetchProfile();
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleManageSubscription = async () => {
     if (!subscribed) {
@@ -150,7 +113,7 @@ const Settings = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Dashboard
           </Button>
-          <h1 className="text-3xl font-bold">Settings</h1>
+          <h1 className="text-3xl font-bold">Profile</h1>
         </div>
       </header>
 
@@ -159,35 +122,33 @@ const Settings = () => {
         <Card className="shadow-soft">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5 text-primary" />
-              Account Information
+              <UserCircle className="w-5 h-5 text-primary" />
+              Profile Information
             </CardTitle>
-            <CardDescription>Manage your account details</CardDescription>
+            <CardDescription>Your account details</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label>First Name</Label>
+              <div className="p-3 bg-muted rounded-lg">
+                <span className="text-sm">{firstName || "Not set"}</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Last Name</Label>
+              <div className="p-3 bg-muted rounded-lg">
+                <span className="text-sm">{lastName || "Not set"}</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Email</Label>
               <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
                 <Mail className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm">{session.user.email}</span>
               </div>
             </div>
-
-            <form onSubmit={handleUpdateProfile} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Enter your full name"
-                />
-              </div>
-              <Button type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save Changes"}
-              </Button>
-            </form>
 
             <Separator className="my-4" />
 
