@@ -99,7 +99,7 @@ export const AuthForm = () => {
       <Card className="w-full max-w-md shadow-card">
         <CardHeader className="space-y-4 text-center">
           <div className="mx-auto w-16 h-16 flex items-center justify-center">
-            <img src={logo} alt="Hole Out Golf" className="w-16 h-16 dark:brightness-0 dark:invert" />
+            <img src={logo} alt="Hole Out Golf" className="w-16 h-16" />
           </div>
           <CardTitle className="text-3xl font-bold">Hole Out Golf</CardTitle>
           <CardDescription>
