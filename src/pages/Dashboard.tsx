@@ -112,7 +112,7 @@ const Dashboard = () => {
       <header className="border-b bg-card shadow-soft">
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0" />
+            <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0 dark:brightness-0 dark:invert" />
             <h1 className="text-lg sm:text-2xl font-bold truncate">Hole Out Golf</h1>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
