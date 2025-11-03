@@ -66,9 +66,7 @@ const Settings = () => {
         if (error) throw error;
 
         if (data?.url) {
-          window.open(data.url, "_blank");
-          // Check subscription after a delay to allow for checkout completion
-          setTimeout(checkSubscription, 5000);
+          window.location.href = data.url;
         }
       } catch (error: any) {
         toast({
@@ -89,7 +87,7 @@ const Settings = () => {
         if (error) throw error;
 
         if (data?.url) {
-          window.open(data.url, "_blank");
+          window.location.href = data.url;
         }
       } catch (error: any) {
         toast({
