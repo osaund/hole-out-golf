@@ -80,13 +80,20 @@ serve(async (req) => {
     const hasActiveSub = subscriptions.data.length > 0;
     let productId = null;
     let subscriptionEnd = null;
+    let isCancelled = false;
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
       if (subscription.current_period_end) {
         subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       }
-      logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
+      // Check if subscription is cancelled but still active until period end
+      isCancelled = subscription.cancel_at_period_end;
+      logStep("Active subscription found", { 
+        subscriptionId: subscription.id, 
+        endDate: subscriptionEnd,
+        cancelAtPeriodEnd: isCancelled 
+      });
       productId = subscription.items.data[0].price.product as string;
       logStep("Determined subscription tier", { productId });
     } else {
@@ -96,7 +103,8 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       product_id: productId,
-      subscription_end: subscriptionEnd
+      subscription_end: subscriptionEnd,
+      is_cancelled: isCancelled
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

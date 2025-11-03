@@ -15,7 +15,7 @@ const Settings = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const { subscribed, renewalDate, checkSubscription, loading: subscriptionLoading } = useSubscription();
+  const { subscribed, renewalDate, isCancelled, checkSubscription, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -209,7 +209,9 @@ const Settings = () => {
                     </li>
                     {renewalDate && (
                       <li className="flex items-center gap-2 text-sm mt-4 pt-3 border-t border-border">
-                        <span className="font-medium">Next renewal:</span>
+                        <span className="font-medium">
+                          {isCancelled ? "Access ends:" : "Next renewal:"}
+                        </span>
                         <span className="text-muted-foreground">
                           {new Date(renewalDate).toLocaleDateString('en-GB', { 
                             day: 'numeric',
@@ -217,6 +219,12 @@ const Settings = () => {
                             year: 'numeric'
                           })}
                         </span>
+                      </li>
+                    )}
+                    {isCancelled && renewalDate && (
+                      <li className="flex items-center gap-2 text-sm text-warning">
+                        <span className="w-1.5 h-1.5 bg-warning rounded-full"></span>
+                        Subscription cancelled - access continues until expiry
                       </li>
                     )}
                   </>
