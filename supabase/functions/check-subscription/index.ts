@@ -92,9 +92,15 @@ serve(async (req) => {
 
       logStep("FULL sub object", subscription);
 
-      subscriptionEnd = subscription.current_period_end 
-        ? new Date(subscription.current_period_end * 1000).toISOString()
-        : null;
+      subscriptionEnd =
+        (subscription.cancel_at ??
+          subscription.items?.data?.[0]?.current_period_end)
+          ? new Date(
+              (subscription.cancel_at ??
+                subscription.items.data[0].current_period_end) * 1000
+            ).toISOString()
+          : null;
+
       
       // Check if subscription is cancelled but still active until period end
       isCancelled = subscription.cancel_at_period_end;
