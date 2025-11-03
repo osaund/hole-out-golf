@@ -89,7 +89,9 @@ serve(async (req) => {
         cancel_at_period_end: subscription.cancel_at_period_end,
         status: subscription.status 
       });
-      
+
+      logStep("FULL sub object", subscription);
+
       subscriptionEnd = subscription.current_period_end 
         ? new Date(subscription.current_period_end * 1000).toISOString()
         : null;
