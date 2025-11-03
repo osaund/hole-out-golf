@@ -84,9 +84,16 @@ serve(async (req) => {
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
-      if (subscription.current_period_end) {
-        subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      }
+      logStep("Subscription details", { 
+        current_period_end: subscription.current_period_end,
+        cancel_at_period_end: subscription.cancel_at_period_end,
+        status: subscription.status 
+      });
+      
+      subscriptionEnd = subscription.current_period_end 
+        ? new Date(subscription.current_period_end * 1000).toISOString()
+        : null;
+      
       // Check if subscription is cancelled but still active until period end
       isCancelled = subscription.cancel_at_period_end;
       logStep("Active subscription found", { 
