@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { User, Mail, Calendar } from "lucide-react";
+import { User, Mail, Calendar, Phone } from "lucide-react";
 import { format } from "date-fns";
 
 interface UserDetailsModalProps {
@@ -7,8 +7,11 @@ interface UserDetailsModalProps {
   onClose: () => void;
   user: {
     id: string;
-    full_name: string;
+    first_name?: string;
+    last_name?: string;
+    full_name?: string;
     email: string;
+    phone_number?: string;
     created_at: string;
   } | null;
 }
@@ -26,8 +29,15 @@ export default function UserDetailsModal({ isOpen, onClose, user }: UserDetailsM
           <div className="flex items-start gap-3">
             <User className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Name</p>
-              <p className="text-base">{user.full_name || "Not set"}</p>
+              <p className="text-sm font-medium text-muted-foreground">First Name</p>
+              <p className="text-base">{user.first_name || "Not set"}</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <User className="w-5 h-5 text-muted-foreground mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Last Name</p>
+              <p className="text-base">{user.last_name || "Not set"}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
@@ -35,6 +45,13 @@ export default function UserDetailsModal({ isOpen, onClose, user }: UserDetailsM
             <div>
               <p className="text-sm font-medium text-muted-foreground">Email</p>
               <p className="text-base">{user.email}</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <Phone className="w-5 h-5 text-muted-foreground mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Phone Number</p>
+              <p className="text-base">{user.phone_number || "Not set"}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
