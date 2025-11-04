@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { MapPin, Target, Play, Info } from "lucide-react";
+import { MapPin, Target, Play, Info, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SubscribeDialog } from "@/components/SubscribeDialog";
@@ -36,6 +36,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
   const { subscribed, user } = useSubscription();
   const [subscribeDialogOpen, setSubscribeDialogOpen] = useState(false);
   const [playedToday, setPlayedToday] = useState<Set<string>>(new Set());
+  const [alertDismissed, setAlertDismissed] = useState(false);
   const sortedCourses = sortCourses(courses);
 
   useEffect(() => {
@@ -129,13 +130,23 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
 
   return (
     <>
-      <Alert className="mb-6">
-        <Info className="h-4 w-4" />
-        <AlertTitle>Important Notice</AlertTitle>
-        <AlertDescription>
-          You must register a play before taking your shot to be eligible for the prize. Click "Play Now" to register your play at a course.
-        </AlertDescription>
-      </Alert>
+      {!alertDismissed && (
+        <Alert className="mb-6 bg-primary/10 border-primary/20 relative">
+          <Info className="h-4 w-4 text-primary" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-2 h-6 w-6"
+            onClick={() => setAlertDismissed(true)}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+          <AlertTitle className="text-primary">Important Notice</AlertTitle>
+          <AlertDescription className="text-foreground/80">
+            You must register a play before taking your shot to be eligible for the prize. Click "Play Now" to register your play at a course.
+          </AlertDescription>
+        </Alert>
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {sortedCourses.map((course) => (
         <Card key={course.id} className="shadow-soft hover:shadow-card transition-all overflow-hidden">
