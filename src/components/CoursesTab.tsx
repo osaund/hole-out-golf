@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Target, Play } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { MapPin, Target, Play, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SubscribeDialog } from "@/components/SubscribeDialog";
@@ -128,6 +129,13 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
 
   return (
     <>
+      <Alert className="mb-6">
+        <Info className="h-4 w-4" />
+        <AlertTitle>Important Notice</AlertTitle>
+        <AlertDescription>
+          You must register a play before taking your shot to be eligible for the prize. Click "Play Now" to register your play at a course.
+        </AlertDescription>
+      </Alert>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {sortedCourses.map((course) => (
         <Card key={course.id} className="shadow-soft hover:shadow-card transition-all overflow-hidden">
