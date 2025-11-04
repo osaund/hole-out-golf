@@ -57,6 +57,7 @@ export type Database = {
           prize_amount: number | null
           shot_id: string | null
           status: string | null
+          tee_time: string | null
           time_of_hole_in_one: string | null
           user_id: string
         }
@@ -69,6 +70,7 @@ export type Database = {
           prize_amount?: number | null
           shot_id?: string | null
           status?: string | null
+          tee_time?: string | null
           time_of_hole_in_one?: string | null
           user_id: string
         }
@@ -81,6 +83,7 @@ export type Database = {
           prize_amount?: number | null
           shot_id?: string | null
           status?: string | null
+          tee_time?: string | null
           time_of_hole_in_one?: string | null
           user_id?: string
         }

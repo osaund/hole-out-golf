@@ -29,6 +29,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
   const [selectedShotId, setSelectedShotId] = useState("");
   const [claimDate, setClaimDate] = useState<Date>();
   const [timeOfHoleInOne, setTimeOfHoleInOne] = useState("");
+  const [teeTime, setTeeTime] = useState("");
   const [recentShots, setRecentShots] = useState<any[]>([]);
   const { toast } = useToast();
   const { subscribed } = useSubscription();
@@ -112,6 +113,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         shot_id: subscribed ? selectedShotId : null,
         prize_amount: prizeAmount,
         time_of_hole_in_one: timeOfHoleInOne || null,
+        tee_time: teeTime || null,
       });
 
       if (error) throw error;
@@ -144,6 +146,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       setSelectedShotId("");
       setClaimDate(undefined);
       setTimeOfHoleInOne("");
+      setTeeTime("");
       onSuccess();
     } catch (error: any) {
       const errorMessage = error.message.includes("unique_prize_claim_per_day")
@@ -234,6 +237,16 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
             </div>
           )}
 
+          <div className="space-y-2">
+            <Label htmlFor="teeTime">Tee Time</Label>
+            <Input
+              id="teeTime"
+              type="time"
+              value={teeTime}
+              onChange={(e) => setTeeTime(e.target.value)}
+              required
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="timeOfHoleInOne">Time of Hole in One</Label>
             <Input

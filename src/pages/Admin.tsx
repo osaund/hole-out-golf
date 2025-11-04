@@ -222,6 +222,7 @@ export default function Admin() {
                         <TableHead>User</TableHead>
                         <TableHead>Course</TableHead>
                         <TableHead>Claim Date</TableHead>
+                        <TableHead>Tee Time</TableHead>
                         <TableHead>Time of Hole in One</TableHead>
                         <TableHead>Shot Time Start</TableHead>
                         <TableHead>Prize</TableHead>
@@ -247,6 +248,9 @@ export default function Admin() {
                           <TableCell>{getCourseName(claim.course_id)}</TableCell>
                           <TableCell className="whitespace-nowrap">
                             {format(new Date(claim.claim_date), "PP")}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {claim.tee_time || "-"}
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
                             {claim.time_of_hole_in_one || "-"}
