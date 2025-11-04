@@ -28,7 +28,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
   const [loading, setLoading] = useState(false);
   const [selectedShotId, setSelectedShotId] = useState("");
   const [claimDate, setClaimDate] = useState<Date>();
-  const [teeTime, setTeeTime] = useState("");
+  const [timeOfHoleInOne, setTimeOfHoleInOne] = useState("");
   const [recentShots, setRecentShots] = useState<any[]>([]);
   const { toast } = useToast();
   const { subscribed } = useSubscription();
@@ -111,6 +111,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         claim_date: finalDate.toISOString(),
         shot_id: subscribed ? selectedShotId : null,
         prize_amount: prizeAmount,
+        time_of_hole_in_one: timeOfHoleInOne || null,
       });
 
       if (error) throw error;
@@ -122,7 +123,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
             courseName: selectedCourse?.name,
             userEmail: user?.email,
             userName: profile?.full_name || user?.email,
-            teeTime: teeTime,
+            teeTime: timeOfHoleInOne,
             notes: notes,
             claimDate: finalDate.toISOString(),
           }
@@ -142,7 +143,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       setNotes("");
       setSelectedShotId("");
       setClaimDate(undefined);
-      setTeeTime("");
+      setTimeOfHoleInOne("");
       onSuccess();
     } catch (error: any) {
       const errorMessage = error.message.includes("unique_prize_claim_per_day")
@@ -234,12 +235,12 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="teeTime">Tee Time</Label>
+            <Label htmlFor="timeOfHoleInOne">Time of Hole in One</Label>
             <Input
-              id="teeTime"
+              id="timeOfHoleInOne"
               type="time"
-              value={teeTime}
-              onChange={(e) => setTeeTime(e.target.value)}
+              value={timeOfHoleInOne}
+              onChange={(e) => setTimeOfHoleInOne(e.target.value)}
               required
             />
           </div>

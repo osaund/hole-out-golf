@@ -222,7 +222,7 @@ export default function Admin() {
                         <TableHead>User</TableHead>
                         <TableHead>Course</TableHead>
                         <TableHead>Claim Date</TableHead>
-                        <TableHead>Shot Time</TableHead>
+                        <TableHead>Time of Hole in One</TableHead>
                         <TableHead>Prize</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Notes</TableHead>
@@ -248,9 +248,7 @@ export default function Admin() {
                             {format(new Date(claim.claim_date), "PP")}
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
-                            {claim.shots?.created_at 
-                              ? format(new Date(claim.shots.created_at), "PPp")
-                              : "-"}
+                            {claim.time_of_hole_in_one || "-"}
                           </TableCell>
                           <TableCell>
                             {claim.prize_amount ? `£${claim.prize_amount.toFixed(2)}` : "-"}
