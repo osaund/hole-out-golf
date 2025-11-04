@@ -131,7 +131,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
   return (
     <>
       {!alertDismissed && (
-        <Alert className="mb-4 py-2 pl-3 pr-8 border-l-4 border-l-primary border-y-0 border-r-0 relative">
+        <Alert className="mb-4 py-2 pl-3 pr-8 border-0 relative">
           <Button
             variant="ghost"
             size="icon"
