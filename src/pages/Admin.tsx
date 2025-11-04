@@ -37,7 +37,7 @@ export default function Admin() {
 
   const fetchData = async () => {
     const [claimsData, coursesData] = await Promise.all([
-      supabase.from("prize_claims").select("*, profiles(full_name)").order("created_at", { ascending: false }),
+      supabase.from("prize_claims").select("*, profiles(full_name), shots(played_at)").order("created_at", { ascending: false }),
       supabase.from("courses").select("*").order("name"),
     ]);
 
@@ -218,7 +218,8 @@ export default function Admin() {
                       <TableRow>
                         <TableHead>User</TableHead>
                         <TableHead>Course</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead>Claim Date</TableHead>
+                        <TableHead>Shot Time</TableHead>
                         <TableHead>Prize</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Notes</TableHead>
@@ -234,6 +235,11 @@ export default function Admin() {
                           <TableCell>{getCourseName(claim.course_id)}</TableCell>
                           <TableCell className="whitespace-nowrap">
                             {format(new Date(claim.claim_date), "PP")}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {claim.shots?.played_at 
+                              ? format(new Date(claim.shots.played_at), "PPp")
+                              : "-"}
                           </TableCell>
                           <TableCell>
                             {claim.prize_amount ? `£${claim.prize_amount.toFixed(2)}` : "-"}
