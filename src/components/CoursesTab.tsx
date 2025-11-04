@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +34,28 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
   const { toast } = useToast();
   const { subscribed, user } = useSubscription();
   const [subscribeDialogOpen, setSubscribeDialogOpen] = useState(false);
+  const [playedToday, setPlayedToday] = useState<Set<string>>(new Set());
   const sortedCourses = sortCourses(courses);
+
+  useEffect(() => {
+    const checkPlayedCourses = async () => {
+      if (!user) return;
+
+      const today = new Date().toISOString().split('T')[0];
+      const { data: todaysShots } = await supabase
+        .from("shots")
+        .select("course_id")
+        .eq("user_id", user.id)
+        .gte("created_at", `${today}T00:00:00`)
+        .lt("created_at", `${today}T23:59:59`);
+
+      if (todaysShots) {
+        setPlayedToday(new Set(todaysShots.map(shot => shot.course_id)));
+      }
+    };
+
+    checkPlayedCourses();
+  }, [user]);
 
   const handlePlayNow = async (course: any) => {
     // Capture the exact timestamp when button is pressed
@@ -84,6 +105,9 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
       });
 
       if (error) throw error;
+
+      // Update the played today set
+      setPlayedToday(prev => new Set([...prev, course.id]));
 
       toast({
         title: "Shot Logged!",
@@ -142,9 +166,10 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
                 onClick={() => handlePlayNow(course)}
                 className="w-full"
                 size="lg"
+                disabled={playedToday.has(course.id)}
               >
                 <Play className="w-4 h-4 mr-2" />
-                Play Now
+                {playedToday.has(course.id) ? "Played Today" : "Play Now"}
               </Button>
             )}
             {course.coming_soon && (
