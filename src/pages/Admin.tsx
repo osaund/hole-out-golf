@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import UserDetailsModal from "@/components/UserDetailsModal";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ export default function Admin() {
   const [courses, setCourses] = useState<any[]>([]);
   const [prizeAmounts, setPrizeAmounts] = useState<{ [key: string]: string }>({});
   const [editingNotes, setEditingNotes] = useState<{ [key: string]: string }>({});
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -37,7 +40,7 @@ export default function Admin() {
 
   const fetchData = async () => {
     const [claimsData, coursesData] = await Promise.all([
-      supabase.from("prize_claims").select("*, profiles(full_name), shots(played_at)").order("created_at", { ascending: false }),
+      supabase.from("prize_claims").select("*, profiles(id, full_name, email, created_at), shots(played_at)").order("created_at", { ascending: false }),
       supabase.from("courses").select("*").order("name"),
     ]);
 
@@ -230,7 +233,15 @@ export default function Admin() {
                       {claims.map((claim) => (
                         <TableRow key={claim.id}>
                           <TableCell className="font-medium">
-                            {claim.profiles?.full_name || "Unknown User"}
+                            <button
+                              onClick={() => {
+                                setSelectedUser(claim.profiles);
+                                setIsUserModalOpen(true);
+                              }}
+                              className="text-primary hover:underline cursor-pointer text-left"
+                            >
+                              {claim.profiles?.email || "Unknown User"}
+                            </button>
                           </TableCell>
                           <TableCell>{getCourseName(claim.course_id)}</TableCell>
                           <TableCell className="whitespace-nowrap">
@@ -322,6 +333,12 @@ export default function Admin() {
           </TabsContent>
         </Tabs>
       </div>
+      
+      <UserDetailsModal
+        isOpen={isUserModalOpen}
+        onClose={() => setIsUserModalOpen(false)}
+        user={selectedUser}
+      />
     </div>
   );
 }
