@@ -133,6 +133,7 @@ export type Database = {
           hole_number: number
           id: string
           is_hole_in_one: boolean | null
+          played_at: string | null
           user_id: string
           video_url: string | null
         }
@@ -142,6 +143,7 @@ export type Database = {
           hole_number: number
           id?: string
           is_hole_in_one?: boolean | null
+          played_at?: string | null
           user_id: string
           video_url?: string | null
         }
@@ -151,6 +153,7 @@ export type Database = {
           hole_number?: number
           id?: string
           is_hole_in_one?: boolean | null
+          played_at?: string | null
           user_id?: string
           video_url?: string | null
         }

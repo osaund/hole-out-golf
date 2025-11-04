@@ -37,6 +37,9 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
   const sortedCourses = sortCourses(courses);
 
   const handlePlayNow = async (course: any) => {
+    // Capture the exact timestamp when button is pressed
+    const playedAt = new Date().toISOString();
+    
     if (!subscribed) {
       setSubscribeDialogOpen(true);
       return;
@@ -71,12 +74,13 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
         return;
       }
 
-      // Log the shot
+      // Log the shot with the captured timestamp
       const { error } = await supabase.from("shots").insert({
         user_id: user.id,
         course_id: course.id,
         hole_number: 1, // Default to hole 1 for now
         is_hole_in_one: false,
+        played_at: playedAt,
       });
 
       if (error) throw error;
