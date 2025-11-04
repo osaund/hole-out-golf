@@ -131,15 +131,15 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
   return (
     <>
       {!alertDismissed && (
-        <Alert className="mb-4 py-2 pl-9 pr-10 bg-primary/10 border-primary/20 relative">
-          <Info className="h-3.5 w-3.5 text-primary absolute left-3 top-3" />
+        <Alert className="mb-4 py-2 px-3 bg-primary/10 border-primary/20 relative">
+          <Info className="h-3.5 w-3.5 text-primary" />
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-2 right-2 h-6 w-6 hover:bg-primary/20"
+            className="absolute top-1.5 right-1.5 h-5 w-5"
             onClick={() => setAlertDismissed(true)}
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
           </Button>
           <AlertTitle className="text-primary text-sm mb-0.5">Important Notice</AlertTitle>
           <AlertDescription className="text-foreground/80 text-xs">
