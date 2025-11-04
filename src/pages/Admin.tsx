@@ -40,7 +40,7 @@ export default function Admin() {
 
   const fetchData = async () => {
     const [claimsData, coursesData] = await Promise.all([
-      supabase.from("prize_claims").select("*, profiles(id, first_name, last_name, full_name, email, phone_number, created_at), shots:shot_id(played_at)").order("created_at", { ascending: false }),
+      supabase.from("prize_claims").select("*, profiles(id, first_name, last_name, full_name, email, phone_number, created_at), shots:shot_id(created_at)").order("created_at", { ascending: false }),
       supabase.from("courses").select("*").order("name"),
     ]);
 
@@ -248,8 +248,8 @@ export default function Admin() {
                             {format(new Date(claim.claim_date), "PP")}
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
-                            {claim.shots?.played_at 
-                              ? format(new Date(claim.shots.played_at), "PPp")
+                            {claim.shots?.created_at 
+                              ? format(new Date(claim.shots.created_at), "PPp")
                               : "-"}
                           </TableCell>
                           <TableCell>
