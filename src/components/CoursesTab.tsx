@@ -131,19 +131,17 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
   return (
     <>
       {!alertDismissed && (
-        <Alert className="mb-4 py-2 px-3 border-primary/20 relative">
-          <Info className="h-3.5 w-3.5 text-primary" />
+        <Alert className="mb-4 py-2 pl-3 pr-8 border-l-4 border-l-primary border-y-0 border-r-0 relative">
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-1.5 right-1.5 h-5 w-5"
+            className="absolute top-1 right-1 h-5 w-5 hover:bg-primary/10"
             onClick={() => setAlertDismissed(true)}
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-3 w-3" />
           </Button>
-          <AlertTitle className="text-primary text-sm mb-0.5">Important Notice</AlertTitle>
-          <AlertDescription className="text-foreground/80 text-xs">
-            You must register a play before taking your shot to be eligible for the prize. Click "Play Now" to register your play at a course.
+          <AlertDescription className="text-foreground text-xs leading-tight">
+            <span className="font-semibold text-primary">Important:</span> Register your play before taking your shot to be eligible for the prize.
           </AlertDescription>
         </Alert>
       )}
