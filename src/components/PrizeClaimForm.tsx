@@ -172,11 +172,6 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
             Fill in the details of your hole-in-one to claim your prize.
           </DialogDescription>
         </DialogHeader>
-        <div className="bg-muted/50 border border-border rounded-lg p-3 mb-4">
-          <p className="text-sm text-muted-foreground">
-            <strong className="text-foreground">Important:</strong> You must register a play before taking your shot to be eligible for the prize.
-          </p>
-        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="course">Golf Course</Label>
