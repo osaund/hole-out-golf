@@ -98,8 +98,8 @@ export const AuthForm = () => {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-muted/20 to-background">
       <Card className="w-full max-w-md shadow-card border-0">
         <CardHeader className="space-y-4 text-center">
-          <div className="mx-auto w-16 h-16 flex items-center justify-center">
-            <img src={logo} alt="Hole Out Golf" className="w-16 h-16" />
+          <div className="mx-auto w-24 h-24 flex items-center justify-center">
+            <img src={logo} alt="Hole Out Golf" className="w-24 h-24" />
           </div>
           <CardTitle className="text-3xl font-bold">Hole Out Golf</CardTitle>
           <CardDescription>
