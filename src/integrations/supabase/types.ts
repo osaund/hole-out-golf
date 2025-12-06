@@ -84,6 +84,7 @@ export type Database = {
           created_at: string
           date: string
           enabled: boolean | null
+          entry_fee: number | null
           id: string
           nearest_pin_prize: number | null
           organizer: string
@@ -95,6 +96,7 @@ export type Database = {
           created_at?: string
           date: string
           enabled?: boolean | null
+          entry_fee?: number | null
           id?: string
           nearest_pin_prize?: number | null
           organizer?: string
@@ -106,6 +108,7 @@ export type Database = {
           created_at?: string
           date?: string
           enabled?: boolean | null
+          entry_fee?: number | null
           id?: string
           nearest_pin_prize?: number | null
           organizer?: string

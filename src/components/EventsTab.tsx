@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +34,7 @@ interface Event {
   nearest_pin_prize: number;
   organizer: string;
   enabled: boolean;
+  entry_fee: number | null;
 }
 
 interface EventRegistration {
@@ -45,6 +47,7 @@ interface EventRegistration {
 
 export const EventsTab = () => {
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedOrganizer, setSelectedOrganizer] = useState<string>("all");
   const [events, setEvents] = useState<Event[]>([]);
   const [registrations, setRegistrations] = useState<EventRegistration[]>([]);
@@ -52,11 +55,20 @@ export const EventsTab = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [registering, setRegistering] = useState<string | null>(null);
 
+  const refreshRegistrations = async (currentUserId: string) => {
+    const { data: regData } = await supabase
+      .from("event_registrations")
+      .select("*, events(*)")
+      .eq("user_id", currentUserId);
+    setRegistrations(regData as EventRegistration[] || []);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       // Get current user
       const { data: { session } } = await supabase.auth.getSession();
-      setUserId(session?.user?.id || null);
+      const currentUserId = session?.user?.id || null;
+      setUserId(currentUserId);
 
       // Fetch events
       const { data: eventsData, error: eventsError } = await supabase
@@ -71,24 +83,43 @@ export const EventsTab = () => {
       }
 
       // Fetch user's registrations if logged in
-      if (session?.user?.id) {
-        const { data: regData, error: regError } = await supabase
-          .from("event_registrations")
-          .select("*, events(*)")
-          .eq("user_id", session.user.id);
-
-        if (regError) {
-          console.error("Error fetching registrations:", regError);
-        } else {
-          setRegistrations(regData as EventRegistration[] || []);
-        }
+      if (currentUserId) {
+        await refreshRegistrations(currentUserId);
       }
 
       setLoading(false);
+
+      // Check for successful event payment
+      const eventSuccess = searchParams.get("event_success");
+      if (eventSuccess && session?.access_token) {
+        setSearchParams({});
+        try {
+          const { data, error } = await supabase.functions.invoke("verify-event-payment", {
+            body: { eventId: eventSuccess },
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          });
+
+          if (error) throw error;
+
+          if (data?.success) {
+            toast({
+              title: "Registration Complete!",
+              description: "You're now registered for this event.",
+            });
+            await refreshRegistrations(currentUserId!);
+          }
+        } catch (err: any) {
+          toast({
+            title: "Registration Issue",
+            description: err.message || "Failed to verify payment",
+            variant: "destructive",
+          });
+        }
+      }
     };
 
     fetchData();
-  }, []);
+  }, [searchParams, setSearchParams, toast]);
 
   // Get unique organizers
   const organizers = [...new Set(events.map(e => e.organizer))];
@@ -116,38 +147,41 @@ export const EventsTab = () => {
 
     setRegistering(event.id);
 
-    const { error } = await supabase
-      .from("event_registrations")
-      .insert({
-        event_id: event.id,
-        user_id: userId,
-      });
-
-    if (error) {
-      if (error.code === "23505") {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
         toast({
-          title: "Already Registered",
-          description: `You're already registered for ${event.round}.`,
-        });
-      } else {
-        toast({
-          title: "Registration Failed",
-          description: error.message,
+          title: "Session Expired",
+          description: "Please log in again.",
           variant: "destructive",
         });
+        setRegistering(null);
+        return;
       }
-    } else {
-      // Refresh registrations
-      const { data: regData } = await supabase
-        .from("event_registrations")
-        .select("*, events(*)")
-        .eq("user_id", userId);
 
-      setRegistrations(regData as EventRegistration[] || []);
+      const { data, error } = await supabase.functions.invoke("create-event-checkout", {
+        body: { eventId: event.id },
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
 
+      if (error) throw error;
+
+      // If free event, just refresh registrations
+      if (data?.free) {
+        await refreshRegistrations(userId);
+        toast({
+          title: "Registered!",
+          description: `You're registered for ${event.round} - ${event.region}.`,
+        });
+      } else if (data?.url) {
+        // Redirect to Stripe checkout
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
       toast({
-        title: "Registered!",
-        description: `You're registered for ${event.round} - ${event.region}.`,
+        title: "Registration Failed",
+        description: err.message || "Something went wrong",
+        variant: "destructive",
       });
     }
 
@@ -244,7 +278,7 @@ export const EventsTab = () => {
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Ticket className="w-4 h-4 text-primary" />
-                      <span>£5 Entry</span>
+                      <span>£{event.entry_fee || 0} Entry</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Trophy className="w-4 h-4 text-primary" />
