@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, DollarSign, ArrowLeft, Save } from "lucide-react";
+import { Trophy, DollarSign, ArrowLeft, Save, Calendar, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
@@ -21,7 +21,11 @@ export default function Admin() {
   const { toast } = useToast();
   const [claims, setClaims] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
+  const [eventRegistrations, setEventRegistrations] = useState<any[]>([]);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [prizeAmounts, setPrizeAmounts] = useState<{ [key: string]: string }>({});
+  const [entryFees, setEntryFees] = useState<{ [key: string]: string }>({});
   const [editingNotes, setEditingNotes] = useState<{ [key: string]: string }>({});
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
@@ -39,9 +43,10 @@ export default function Admin() {
   }, [isAdmin]);
 
   const fetchData = async () => {
-    const [claimsData, coursesData] = await Promise.all([
+    const [claimsData, coursesData, eventsData] = await Promise.all([
       supabase.from("prize_claims").select("*, profiles(id, first_name, last_name, full_name, email, phone_number, created_at), shots:shot_id(created_at)").order("created_at", { ascending: false }),
       supabase.from("courses").select("*").order("name"),
+      supabase.from("events").select("*").order("date", { ascending: true }),
     ]);
 
     if (claimsData.error) {
@@ -52,7 +57,6 @@ export default function Admin() {
         variant: "destructive",
       });
     } else {
-      console.log("Claims fetched:", claimsData.data);
       setClaims(claimsData.data || []);
       const notes: { [key: string]: string } = {};
       (claimsData.data || []).forEach((claim) => {
@@ -70,6 +74,74 @@ export default function Admin() {
         amounts[course.id] = course.prize_amount?.toString() || "0";
       });
       setPrizeAmounts(amounts);
+    }
+
+    if (eventsData.error) {
+      console.error("Error fetching events:", eventsData.error);
+    } else {
+      setEvents(eventsData.data || []);
+      const fees: { [key: string]: string } = {};
+      (eventsData.data || []).forEach((event) => {
+        fees[event.id] = event.entry_fee?.toString() || "0";
+      });
+      setEntryFees(fees);
+      
+      // Select first event by default
+      if (eventsData.data && eventsData.data.length > 0 && !selectedEventId) {
+        setSelectedEventId(eventsData.data[0].id);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (selectedEventId) {
+      fetchEventRegistrations(selectedEventId);
+    }
+  }, [selectedEventId]);
+
+  const fetchEventRegistrations = async (eventId: string) => {
+    const { data, error } = await supabase
+      .from("event_registrations")
+      .select("*, profiles(id, first_name, last_name, full_name, email, phone_number)")
+      .eq("event_id", eventId)
+      .order("registered_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching registrations:", error);
+    } else {
+      setEventRegistrations(data || []);
+    }
+  };
+
+  const handleEntryFeeUpdate = async (eventId: string) => {
+    const fee = parseFloat(entryFees[eventId]);
+    
+    if (isNaN(fee) || fee < 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid entry fee",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from("events")
+      .update({ entry_fee: fee })
+      .eq("id", eventId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Entry fee updated successfully",
+      });
+      fetchData();
     }
   };
 
@@ -202,6 +274,7 @@ export default function Admin() {
         <Tabs defaultValue="claims" className="space-y-6">
           <TabsList>
             <TabsTrigger value="claims">Prize Claims</TabsTrigger>
+            <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="prizes">Prize Pots</TabsTrigger>
           </TabsList>
 
@@ -338,6 +411,137 @@ export default function Admin() {
                 </CardContent>
               </Card>
             ))}
+          </TabsContent>
+
+          <TabsContent value="events" className="space-y-4">
+            <div className="grid gap-6 md:grid-cols-3">
+              {/* Event List */}
+              <Card className="md:col-span-1">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5" />
+                    Events
+                  </CardTitle>
+                  <CardDescription>Select an event to view registrations</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {events.map((event) => (
+                    <div
+                      key={event.id}
+                      className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                        selectedEventId === event.id
+                          ? "bg-primary/10 border-primary"
+                          : "hover:bg-muted"
+                      }`}
+                      onClick={() => setSelectedEventId(event.id)}
+                    >
+                      <div className="font-medium">{event.round} - {event.region}</div>
+                      <div className="text-sm text-muted-foreground">{event.venue}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {format(new Date(event.date), "PP")}
+                      </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={entryFees[event.id] || ""}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            setEntryFees({ ...entryFees, [event.id]: e.target.value });
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          placeholder="Entry fee"
+                          className="h-8 text-sm"
+                        />
+                        <Button 
+                          size="sm" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEntryFeeUpdate(event.id);
+                          }}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Entry fee: £{event.entry_fee?.toFixed(2) || "0.00"}
+                      </p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Registrations Table */}
+              <Card className="md:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    Registrations
+                    {selectedEventId && (
+                      <Badge variant="secondary">{eventRegistrations.length}</Badge>
+                    )}
+                  </CardTitle>
+                  <CardDescription>
+                    {selectedEventId
+                      ? `Showing registrations for ${events.find(e => e.id === selectedEventId)?.round || "selected event"}`
+                      : "Select an event to view registrations"}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {!selectedEventId ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p>Select an event to view registrations</p>
+                    </div>
+                  ) : eventRegistrations.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p>No registrations for this event yet</p>
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Phone</TableHead>
+                          <TableHead>Registered At</TableHead>
+                          <TableHead>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {eventRegistrations.map((reg) => (
+                          <TableRow key={reg.id}>
+                            <TableCell className="font-medium">
+                              <button
+                                onClick={() => {
+                                  setSelectedUser(reg.profiles);
+                                  setIsUserModalOpen(true);
+                                }}
+                                className="text-primary hover:underline cursor-pointer text-left"
+                              >
+                                {reg.profiles?.first_name} {reg.profiles?.last_name}
+                              </button>
+                            </TableCell>
+                            <TableCell>{reg.profiles?.email || "-"}</TableCell>
+                            <TableCell>{reg.profiles?.phone_number || "-"}</TableCell>
+                            <TableCell>
+                              {format(new Date(reg.registered_at), "PPp")}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={reg.attended ? "default" : "secondary"}>
+                                {reg.attended ? "Attended" : "Registered"}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
