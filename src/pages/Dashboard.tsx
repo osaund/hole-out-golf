@@ -6,6 +6,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { UserCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.png";
 import { PrizeClaimBanner } from "@/components/PrizeClaimBanner";
 import { PrizeClaimForm } from "@/components/PrizeClaimForm";
 import { CoursesTab } from "@/components/CoursesTab";
@@ -140,7 +141,13 @@ const Dashboard = () => {
         <main className="flex-1 flex flex-col">
           <header className="border-b bg-card shadow-soft p-4 flex items-center gap-4">
             <SidebarTrigger />
-            <h1 className="text-xl font-semibold capitalize">{activeTab}</h1>
+            <div className="flex items-center gap-3">
+              <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 object-contain" />
+              <div className="flex flex-col">
+                <span className="font-bold text-lg leading-tight">Hole Out Golf</span>
+                <span className="text-sm text-muted-foreground capitalize">{activeTab}</span>
+              </div>
+            </div>
             <div className="ml-auto flex items-center gap-2">
               <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
                 <UserCircle className="h-5 w-5" />
