@@ -9,7 +9,6 @@ interface Event {
   round: string;
   region: string;
   date: string;
-  time: string;
   venue: string;
   price: number;
   food: string;
@@ -22,7 +21,6 @@ const events: Event[] = [
     round: "Round 1",
     region: "Hampshire",
     date: "4th April",
-    time: "11:32",
     venue: "Boundary Lakes GC",
     price: 60,
     food: "Coffee & bacon rolls + buffet",
@@ -33,7 +31,6 @@ const events: Event[] = [
     round: "Round 2",
     region: "Somerset",
     date: "13th June",
-    time: "11:06",
     venue: "Orchardleigh GC",
     price: 55,
     food: "Basket meal",
@@ -44,7 +41,6 @@ const events: Event[] = [
     round: "Round 3",
     region: "Surrey",
     date: "6th July",
-    time: "11:00",
     venue: "Camberley Heath GC",
     price: 133,
     food: "Lasagne & chips",
@@ -55,7 +51,6 @@ const events: Event[] = [
     round: "Round 4",
     region: "Wiltshire",
     date: "31st August",
-    time: "12:00",
     venue: "Cumberwell Park GC",
     price: 70,
     food: "BBQ feast",
@@ -66,7 +61,6 @@ const events: Event[] = [
     round: "Round 5",
     region: "Dorset",
     date: "24th October",
-    time: "9:48",
     venue: "Dorset Golf & Country Club",
     price: 70,
     food: "Coffee & bacon rolls + 1-course meal",
@@ -123,7 +117,7 @@ export const EventsTab = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Calendar className="w-4 h-4 text-primary" />
-                  <span>{event.date}, {event.time}</span>
+                  <span>{event.date}</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <PoundSterling className="w-4 h-4 text-primary" />
