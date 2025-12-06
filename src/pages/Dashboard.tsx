@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { UserCircle, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { PrizeClaimBanner } from "@/components/PrizeClaimBanner";
 import { PrizeClaimForm } from "@/components/PrizeClaimForm";
 import { CoursesTab } from "@/components/CoursesTab";
@@ -139,6 +141,14 @@ const Dashboard = () => {
           <header className="border-b bg-card shadow-soft p-4 flex items-center gap-4">
             <SidebarTrigger />
             <h1 className="text-xl font-semibold capitalize">{activeTab}</h1>
+            <div className="ml-auto flex items-center gap-2">
+              <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
+                <UserCircle className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={handleLogout}>
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
           </header>
 
           <div className="flex-1 p-4 md:p-8 overflow-auto">
