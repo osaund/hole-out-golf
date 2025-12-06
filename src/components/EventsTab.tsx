@@ -119,7 +119,7 @@ export const EventsTab = () => {
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Trophy className="w-4 h-4 text-primary" />
-                  <span>£1,000 Hole-in-One Prize</span>
+                  <span>£1,000 Hole-in-One</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Target className="w-4 h-4 text-primary" />
