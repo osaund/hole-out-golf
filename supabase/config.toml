@@ -1,5 +1,9 @@
 project_id = "vnxbkvphbjesmiriflxu"
 
+[auth]
+# JWT expiry in seconds (604800 = 7 days, default is 3600 = 1 hour)
+jwt_expiry = 604800
+
 [functions.send-prize-claim-email]
 verify_jwt = false
 
