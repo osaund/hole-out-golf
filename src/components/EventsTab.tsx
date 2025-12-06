@@ -218,9 +218,6 @@ export const EventsTab = () => {
           <TabsTrigger value="history" className="flex items-center gap-2">
             <History className="w-4 h-4" />
             My History
-            {registeredEvents.length > 0 && (
-              <Badge variant="secondary" className="ml-1">{registeredEvents.length}</Badge>
-            )}
           </TabsTrigger>
         )}
       </TabsList>
