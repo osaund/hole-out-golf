@@ -1,4 +1,4 @@
-import { MapPin, Calendar, Target, Trophy, Shield, UserCircle, LogOut } from "lucide-react";
+import { MapPin, Calendar, Target, Trophy, Shield, UserCircle, LogOut, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -86,6 +86,22 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout }: 
             </SidebarGroupContent>
           </SidebarGroup>
         )}
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Support</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href="mailto:info@holeoutgolf.co.uk" className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    <span>info@holeoutgolf.co.uk</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border p-4">
