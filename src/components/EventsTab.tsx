@@ -11,6 +11,7 @@ interface Event {
   date: string;
   venue: string;
   nearestPinPrize: number;
+  organizer: string;
   enabled: boolean;
 }
 
@@ -22,6 +23,7 @@ const events: Event[] = [
     date: "4th April",
     venue: "Boundary Lakes GC",
     nearestPinPrize: 60,
+    organizer: "Real Golf Tour",
     enabled: true,
   },
   {
@@ -31,6 +33,7 @@ const events: Event[] = [
     date: "13th June",
     venue: "Orchardleigh GC",
     nearestPinPrize: 55,
+    organizer: "Real Golf Tour",
     enabled: false,
   },
   {
@@ -40,6 +43,7 @@ const events: Event[] = [
     date: "6th July",
     venue: "Camberley Heath GC",
     nearestPinPrize: 133,
+    organizer: "Real Golf Tour",
     enabled: false,
   },
   {
@@ -49,6 +53,7 @@ const events: Event[] = [
     date: "31st August",
     venue: "Cumberwell Park GC",
     nearestPinPrize: 70,
+    organizer: "Real Golf Tour",
     enabled: false,
   },
   {
@@ -58,6 +63,7 @@ const events: Event[] = [
     date: "24th October",
     venue: "Dorset Golf & Country Club",
     nearestPinPrize: 70,
+    organizer: "Real Golf Tour",
     enabled: false,
   },
 ];
@@ -75,9 +81,6 @@ export const EventsTab = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-6">
-        <Badge variant="outline" className="text-sm px-3 py-1">
-          Real Golf Tour
-        </Badge>
         <span className="text-muted-foreground text-sm">2026 Season</span>
       </div>
 
@@ -105,6 +108,7 @@ export const EventsTab = () => {
                 <MapPin className="w-4 h-4" />
                 {event.venue}
               </CardDescription>
+              <span className="text-xs text-muted-foreground">Hosted by {event.organizer}</span>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2 text-sm">
