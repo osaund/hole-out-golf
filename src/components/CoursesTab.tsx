@@ -21,7 +21,8 @@ const sortCourses = (courses: any[]) => {
     // Coming soon courses go last
     if (a.coming_soon && !b.coming_soon) return 1;
     if (!a.coming_soon && b.coming_soon) return -1;
-    return 0;
+    // Sort by priority (higher priority first)
+    return (b.priority || 0) - (a.priority || 0);
   });
 };
 
