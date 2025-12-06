@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Trophy, Target, Ticket, CheckCircle, History } from "lucide-react";
+import { Calendar, MapPin, Trophy, Target, Ticket, CheckCircle, History, Clock } from "lucide-react";
 import realGolfTourLogo from "@/assets/real-golf-tour-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -132,8 +132,18 @@ export const EventsTab = () => {
   // Get registered event IDs
   const registeredEventIds = new Set(registrations.map(r => r.event_id));
 
-  // Get past attended events
-  const attendedEvents = registrations.filter(r => r.attended);
+  // Get all registered events for history (sorted by date descending)
+  const registeredEvents = [...registrations].sort(
+    (a, b) => new Date(b.events.date).getTime() - new Date(a.events.date).getTime()
+  );
+
+  // Helper to check if event date has passed
+  const isEventPast = (dateStr: string) => {
+    const eventDate = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return eventDate < today;
+  };
 
   const handleRegister = async (event: Event) => {
     if (!userId) {
@@ -208,8 +218,8 @@ export const EventsTab = () => {
           <TabsTrigger value="history" className="flex items-center gap-2">
             <History className="w-4 h-4" />
             My History
-            {attendedEvents.length > 0 && (
-              <Badge variant="secondary" className="ml-1">{attendedEvents.length}</Badge>
+            {registeredEvents.length > 0 && (
+              <Badge variant="secondary" className="ml-1">{registeredEvents.length}</Badge>
             )}
           </TabsTrigger>
         )}
@@ -313,10 +323,10 @@ export const EventsTab = () => {
       </TabsContent>
 
       <TabsContent value="history">
-        {attendedEvents.length === 0 ? (
+        {registeredEvents.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <History className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>No events attended yet.</p>
+            <p>No events registered yet.</p>
             <p className="text-sm">Register for an event and start playing!</p>
           </div>
         ) : (
@@ -332,22 +342,32 @@ export const EventsTab = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {attendedEvents.map((reg) => (
-                  <TableRow key={reg.id}>
-                    <TableCell className="font-medium">
-                      {reg.events.round} - {reg.events.region}
-                    </TableCell>
-                    <TableCell>{reg.events.venue}</TableCell>
-                    <TableCell>{formatEventDate(reg.events.date)}</TableCell>
-                    <TableCell>{reg.events.organizer}</TableCell>
-                    <TableCell className="text-right">
-                      <Badge variant="outline" className="text-green-600 border-green-600">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        Attended
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {registeredEvents.map((reg) => {
+                  const isPast = isEventPast(reg.events.date);
+                  return (
+                    <TableRow key={reg.id}>
+                      <TableCell className="font-medium">
+                        {reg.events.round} - {reg.events.region}
+                      </TableCell>
+                      <TableCell>{reg.events.venue}</TableCell>
+                      <TableCell>{formatEventDate(reg.events.date)}</TableCell>
+                      <TableCell>{reg.events.organizer}</TableCell>
+                      <TableCell className="text-right">
+                        {isPast ? (
+                          <Badge variant="outline" className="text-green-600 border-green-600">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            Attended
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-blue-600 border-blue-600">
+                            <Clock className="w-3 h-3 mr-1" />
+                            Attending
+                          </Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
