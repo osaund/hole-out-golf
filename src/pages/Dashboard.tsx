@@ -27,9 +27,8 @@ const Dashboard = () => {
   const { toast } = useToast();
   const { isAdmin } = useUserRole();
   
-  // Default to events tab if returning from event payment
-  const eventSuccess = searchParams.get("event_success");
-  const [activeTab, setActiveTab] = useState(eventSuccess ? "events" : "courses");
+  // Default to events tab
+  const [activeTab, setActiveTab] = useState("events");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
