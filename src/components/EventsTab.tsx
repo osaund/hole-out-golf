@@ -121,12 +121,16 @@ export const EventsTab = () => {
           >
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <Badge 
-                  variant={event.enabled ? "default" : "secondary"}
-                  className="mb-2"
-                >
-                  {event.region}
-                </Badge>
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge 
+                    variant={event.enabled ? "default" : "secondary"}
+                  >
+                    {event.region}
+                  </Badge>
+                  {event.organizer === "Real Golf Tour" && (
+                    <img src={realGolfTourLogo} alt="Real Golf Tour" className="w-5 h-5 rounded-full object-cover" />
+                  )}
+                </div>
                 {!event.enabled && (
                   <Badge variant="outline" className="text-xs">
                     Coming Soon
@@ -137,12 +141,7 @@ export const EventsTab = () => {
                 <MapPin className="w-4 h-4" />
                 {event.venue}
               </CardDescription>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                {event.organizer === "Real Golf Tour" && (
-                  <img src={realGolfTourLogo} alt="Real Golf Tour" className="w-5 h-5 rounded-full object-cover" />
-                )}
-                <span>Hosted by {event.organizer}</span>
-              </div>
+              <span className="text-xs text-muted-foreground">Hosted by {event.organizer}</span>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2 text-sm">
