@@ -1,0 +1,153 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, MapPin, PoundSterling, Utensils } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+interface Event {
+  id: string;
+  round: string;
+  region: string;
+  date: string;
+  time: string;
+  venue: string;
+  price: number;
+  food: string;
+  enabled: boolean;
+}
+
+const events: Event[] = [
+  {
+    id: "1",
+    round: "Round 1",
+    region: "Hampshire",
+    date: "4th April",
+    time: "11:32",
+    venue: "Boundary Lakes GC",
+    price: 60,
+    food: "Coffee & bacon rolls + buffet",
+    enabled: true,
+  },
+  {
+    id: "2",
+    round: "Round 2",
+    region: "Somerset",
+    date: "13th June",
+    time: "11:06",
+    venue: "Orchardleigh GC",
+    price: 55,
+    food: "Basket meal",
+    enabled: false,
+  },
+  {
+    id: "3",
+    round: "Round 3",
+    region: "Surrey",
+    date: "6th July",
+    time: "11:00",
+    venue: "Camberley Heath GC",
+    price: 133,
+    food: "Lasagne & chips",
+    enabled: false,
+  },
+  {
+    id: "4",
+    round: "Round 4",
+    region: "Wiltshire",
+    date: "31st August",
+    time: "12:00",
+    venue: "Cumberwell Park GC",
+    price: 70,
+    food: "BBQ feast",
+    enabled: false,
+  },
+  {
+    id: "5",
+    round: "Round 5",
+    region: "Dorset",
+    date: "24th October",
+    time: "9:48",
+    venue: "Dorset Golf & Country Club",
+    price: 70,
+    food: "Coffee & bacon rolls + 1-course meal",
+    enabled: false,
+  },
+];
+
+export const EventsTab = () => {
+  const { toast } = useToast();
+
+  const handleRegister = (event: Event) => {
+    toast({
+      title: "Registration Coming Soon",
+      description: `Registration for ${event.round} - ${event.region} will be available soon.`,
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 mb-6">
+        <Badge variant="outline" className="text-sm px-3 py-1">
+          Real Golf Tour
+        </Badge>
+        <span className="text-muted-foreground text-sm">2025 Season</span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {events.map((event) => (
+          <Card 
+            key={event.id} 
+            className={`shadow-soft hover:shadow-card transition-all ${!event.enabled ? "opacity-60" : ""}`}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <Badge 
+                  variant={event.enabled ? "default" : "secondary"}
+                  className="mb-2"
+                >
+                  {event.round}
+                </Badge>
+                {!event.enabled && (
+                  <Badge variant="outline" className="text-xs">
+                    Coming Soon
+                  </Badge>
+                )}
+              </div>
+              <CardTitle className="text-xl">{event.region}</CardTitle>
+              <CardDescription className="flex items-center gap-1">
+                <MapPin className="w-4 h-4" />
+                {event.venue}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  <span>{event.date}, {event.time}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <PoundSterling className="w-4 h-4 text-primary" />
+                  <span>£{event.price}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Utensils className="w-4 h-4 text-primary" />
+                  <span>{event.food}</span>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => handleRegister(event)}
+                className="w-full"
+                size="lg"
+                disabled={!event.enabled}
+                variant={event.enabled ? "default" : "outline"}
+              >
+                {event.enabled ? "Register to Play" : "Registration Opens Soon"}
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};

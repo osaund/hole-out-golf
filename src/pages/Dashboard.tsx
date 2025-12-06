@@ -9,6 +9,7 @@ import { PrizeClaimForm } from "@/components/PrizeClaimForm";
 import { CoursesTab } from "@/components/CoursesTab";
 import { PrizeClaimsTab } from "@/components/PrizeClaimsTab";
 import { ShotsTab } from "@/components/ShotsTab";
+import { EventsTab } from "@/components/EventsTab";
 import { LogOut, UserCircle, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -148,14 +149,19 @@ const Dashboard = () => {
         <PrizeClaimBanner onOpenForm={() => setFormOpen(true)} />
 
         <Tabs defaultValue="courses" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="courses">Courses</TabsTrigger>
+            <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="shots">Shots</TabsTrigger>
-            <TabsTrigger value="claims">Prize Claims</TabsTrigger>
+            <TabsTrigger value="claims">Claims</TabsTrigger>
           </TabsList>
 
           <TabsContent value="courses">
             <CoursesTab courses={courses} />
+          </TabsContent>
+
+          <TabsContent value="events">
+            <EventsTab />
           </TabsContent>
 
           <TabsContent value="shots">
