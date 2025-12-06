@@ -27,8 +27,18 @@ export default function Admin() {
   const [prizeAmounts, setPrizeAmounts] = useState<{ [key: string]: string }>({});
   const [entryFees, setEntryFees] = useState<{ [key: string]: string }>({});
   const [editingNotes, setEditingNotes] = useState<{ [key: string]: string }>({});
+  const [registrationSearch, setRegistrationSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+
+  // Filter registrations based on search
+  const filteredRegistrations = eventRegistrations.filter((reg) => {
+    if (!registrationSearch) return true;
+    const searchLower = registrationSearch.toLowerCase();
+    const fullName = `${reg.profiles?.first_name || ""} ${reg.profiles?.last_name || ""}`.toLowerCase();
+    const email = (reg.profiles?.email || "").toLowerCase();
+    return fullName.includes(searchLower) || email.includes(searchLower);
+  });
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -414,134 +424,100 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="events" className="space-y-4">
-            <div className="grid gap-6 md:grid-cols-3">
-              {/* Event List */}
-              <Card className="md:col-span-1">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    Events
-                  </CardTitle>
-                  <CardDescription>Select an event to view registrations</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {events.map((event) => (
-                    <div
-                      key={event.id}
-                      className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                        selectedEventId === event.id
-                          ? "bg-primary/10 border-primary"
-                          : "hover:bg-muted"
-                      }`}
-                      onClick={() => setSelectedEventId(event.id)}
-                    >
-                      <div className="font-medium">{event.round} - {event.region}</div>
-                      <div className="text-sm text-muted-foreground">{event.venue}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {format(new Date(event.date), "PP")}
-                      </div>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={entryFees[event.id] || ""}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            setEntryFees({ ...entryFees, [event.id]: e.target.value });
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          placeholder="Entry fee"
-                          className="h-8 text-sm"
-                        />
-                        <Button 
-                          size="sm" 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEntryFeeUpdate(event.id);
-                          }}
-                        >
-                          Save
-                        </Button>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Entry fee: £{event.entry_fee?.toFixed(2) || "0.00"}
-                      </p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Registrations Table */}
-              <Card className="md:col-span-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    Registrations
-                    {selectedEventId && (
-                      <Badge variant="secondary">{eventRegistrations.length}</Badge>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    {selectedEventId
-                      ? `Showing registrations for ${events.find(e => e.id === selectedEventId)?.round || "selected event"}`
-                      : "Select an event to view registrations"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {!selectedEventId ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p>Select an event to view registrations</p>
-                    </div>
-                  ) : eventRegistrations.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p>No registrations for this event yet</p>
-                    </div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Email</TableHead>
-                          <TableHead>Phone</TableHead>
-                          <TableHead>Registered At</TableHead>
-                          <TableHead>Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {eventRegistrations.map((reg) => (
-                          <TableRow key={reg.id}>
-                            <TableCell className="font-medium">
-                              <button
-                                onClick={() => {
-                                  setSelectedUser(reg.profiles);
-                                  setIsUserModalOpen(true);
-                                }}
-                                className="text-primary hover:underline cursor-pointer text-left"
-                              >
-                                {reg.profiles?.first_name} {reg.profiles?.last_name}
-                              </button>
-                            </TableCell>
-                            <TableCell>{reg.profiles?.email || "-"}</TableCell>
-                            <TableCell>{reg.profiles?.phone_number || "-"}</TableCell>
-                            <TableCell>
-                              {format(new Date(reg.registered_at), "PPp")}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant={reg.attended ? "default" : "secondary"}>
-                                {reg.attended ? "Attended" : "Registered"}
-                              </Badge>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Event Registrations
+                </CardTitle>
+                <CardDescription>View and manage event registrations</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Filters Row */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Select
+                    value={selectedEventId || ""}
+                    onValueChange={(value) => setSelectedEventId(value)}
+                  >
+                    <SelectTrigger className="w-full sm:w-[300px]">
+                      <SelectValue placeholder="Select an event" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover">
+                      {events.map((event) => (
+                        <SelectItem key={event.id} value={event.id}>
+                          {event.round} - {event.venue} ({format(new Date(event.date), "PP")})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <Input
+                    placeholder="Search by name or email..."
+                    value={registrationSearch}
+                    onChange={(e) => setRegistrationSearch(e.target.value)}
+                    className="w-full sm:w-[250px]"
+                  />
+                  
+                  {selectedEventId && (
+                    <Badge variant="outline" className="h-10 px-4 flex items-center">
+                      {filteredRegistrations.length} registrations
+                    </Badge>
                   )}
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+
+                {/* Registrations Table */}
+                {!selectedEventId ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Select an event to view registrations</p>
+                  </div>
+                ) : filteredRegistrations.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>{registrationSearch ? "No matching registrations found" : "No registrations for this event yet"}</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Phone</TableHead>
+                        <TableHead>Registered At</TableHead>
+                        <TableHead>Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredRegistrations.map((reg) => (
+                        <TableRow key={reg.id}>
+                          <TableCell className="font-medium">
+                            <button
+                              onClick={() => {
+                                setSelectedUser(reg.profiles);
+                                setIsUserModalOpen(true);
+                              }}
+                              className="text-primary hover:underline cursor-pointer text-left"
+                            >
+                              {reg.profiles?.first_name} {reg.profiles?.last_name}
+                            </button>
+                          </TableCell>
+                          <TableCell>{reg.profiles?.email || "-"}</TableCell>
+                          <TableCell>{reg.profiles?.phone_number || "-"}</TableCell>
+                          <TableCell>
+                            {format(new Date(reg.registered_at), "PPp")}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={reg.attended ? "default" : "secondary"}>
+                              {reg.attended ? "Attended" : "Registered"}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
