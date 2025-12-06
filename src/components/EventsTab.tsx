@@ -78,7 +78,7 @@ export const EventsTab = () => {
         <Badge variant="outline" className="text-sm px-3 py-1">
           Real Golf Tour
         </Badge>
-        <span className="text-muted-foreground text-sm">2025 Season</span>
+        <span className="text-muted-foreground text-sm">2026 Season</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
