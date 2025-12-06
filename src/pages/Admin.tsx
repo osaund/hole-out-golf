@@ -443,9 +443,9 @@ export default function Admin() {
                       <SelectValue placeholder="Select an event" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
-                      {events.map((event) => (
+                      {events.filter((event) => event.enabled).map((event) => (
                         <SelectItem key={event.id} value={event.id}>
-                          {event.round} - {event.venue} ({format(new Date(event.date), "PP")})
+                          {event.round} - {event.venue} ({format(new Date(event.date), "PP")}) - £{event.entry_fee || 0}
                         </SelectItem>
                       ))}
                     </SelectContent>
