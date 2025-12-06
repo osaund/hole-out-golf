@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, PoundSterling, Utensils } from "lucide-react";
+import { Calendar, MapPin, PoundSterling } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Event {
@@ -10,8 +10,6 @@ interface Event {
   region: string;
   date: string;
   venue: string;
-  price: number;
-  food: string;
   enabled: boolean;
 }
 
@@ -22,8 +20,6 @@ const events: Event[] = [
     region: "Hampshire",
     date: "4th April",
     venue: "Boundary Lakes GC",
-    price: 60,
-    food: "Coffee & bacon rolls + buffet",
     enabled: true,
   },
   {
@@ -32,8 +28,6 @@ const events: Event[] = [
     region: "Somerset",
     date: "13th June",
     venue: "Orchardleigh GC",
-    price: 55,
-    food: "Basket meal",
     enabled: false,
   },
   {
@@ -42,8 +36,6 @@ const events: Event[] = [
     region: "Surrey",
     date: "6th July",
     venue: "Camberley Heath GC",
-    price: 133,
-    food: "Lasagne & chips",
     enabled: false,
   },
   {
@@ -52,8 +44,6 @@ const events: Event[] = [
     region: "Wiltshire",
     date: "31st August",
     venue: "Cumberwell Park GC",
-    price: 70,
-    food: "BBQ feast",
     enabled: false,
   },
   {
@@ -62,8 +52,6 @@ const events: Event[] = [
     region: "Dorset",
     date: "24th October",
     venue: "Dorset Golf & Country Club",
-    price: 70,
-    food: "Coffee & bacon rolls + 1-course meal",
     enabled: false,
   },
 ];
@@ -121,11 +109,7 @@ export const EventsTab = () => {
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <PoundSterling className="w-4 h-4 text-primary" />
-                  <span>£{event.price}</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Utensils className="w-4 h-4 text-primary" />
-                  <span>{event.food}</span>
+                  <span>£5</span>
                 </div>
               </div>
 
