@@ -11,6 +11,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import logo from "@/assets/logo.png";
 
@@ -30,7 +31,17 @@ const menuItems = [
 
 export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout }: DashboardSidebarProps) {
   const navigate = useNavigate();
+  const { setOpenMobile } = useSidebar();
 
+  const handleTabChange = (tab: string) => {
+    onTabChange(tab);
+    setOpenMobile(false);
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setOpenMobile(false);
+  };
   return (
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border p-4">
@@ -49,7 +60,7 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout }: 
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton
                     isActive={activeTab === item.id}
-                    onClick={() => onTabChange(item.id)}
+                    onClick={() => handleTabChange(item.id)}
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
@@ -66,7 +77,7 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout }: 
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => navigate("/admin")}>
+                  <SidebarMenuButton onClick={() => handleNavigate("/admin")}>
                     <Shield className="h-4 w-4" />
                     <span>Admin Panel</span>
                   </SidebarMenuButton>
@@ -80,7 +91,7 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout }: 
       <SidebarFooter className="border-t border-sidebar-border p-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => navigate("/settings")}>
+            <SidebarMenuButton onClick={() => handleNavigate("/settings")}>
               <UserCircle className="h-4 w-4" />
               <span>Profile</span>
             </SidebarMenuButton>
