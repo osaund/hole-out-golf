@@ -77,7 +77,7 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout }: 
         )}
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border">
+      <SidebarFooter className="border-t border-sidebar-border p-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={() => navigate("/settings")}>
