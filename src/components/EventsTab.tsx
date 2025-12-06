@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, PoundSterling } from "lucide-react";
+import { Calendar, MapPin, Trophy, Target, Ticket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Event {
@@ -10,6 +10,7 @@ interface Event {
   region: string;
   date: string;
   venue: string;
+  nearestPinPrize: number;
   enabled: boolean;
 }
 
@@ -20,6 +21,7 @@ const events: Event[] = [
     region: "Hampshire",
     date: "4th April",
     venue: "Boundary Lakes GC",
+    nearestPinPrize: 60,
     enabled: true,
   },
   {
@@ -28,6 +30,7 @@ const events: Event[] = [
     region: "Somerset",
     date: "13th June",
     venue: "Orchardleigh GC",
+    nearestPinPrize: 55,
     enabled: false,
   },
   {
@@ -36,6 +39,7 @@ const events: Event[] = [
     region: "Surrey",
     date: "6th July",
     venue: "Camberley Heath GC",
+    nearestPinPrize: 133,
     enabled: false,
   },
   {
@@ -44,6 +48,7 @@ const events: Event[] = [
     region: "Wiltshire",
     date: "31st August",
     venue: "Cumberwell Park GC",
+    nearestPinPrize: 70,
     enabled: false,
   },
   {
@@ -52,6 +57,7 @@ const events: Event[] = [
     region: "Dorset",
     date: "24th October",
     venue: "Dorset Golf & Country Club",
+    nearestPinPrize: 70,
     enabled: false,
   },
 ];
@@ -108,8 +114,16 @@ export const EventsTab = () => {
                   <span>{event.date}</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <PoundSterling className="w-4 h-4 text-primary" />
-                  <span>£5</span>
+                  <Ticket className="w-4 h-4 text-primary" />
+                  <span>£5 Entry</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Trophy className="w-4 h-4 text-primary" />
+                  <span>£1,000 Hole-in-One Prize</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Target className="w-4 h-4 text-primary" />
+                  <span>£{event.nearestPinPrize} Nearest to Pin</span>
                 </div>
               </div>
 
