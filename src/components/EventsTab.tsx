@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Trophy, Target, Ticket } from "lucide-react";
+import realGolfTourLogo from "@/assets/real-golf-tour-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -136,7 +137,12 @@ export const EventsTab = () => {
                 <MapPin className="w-4 h-4" />
                 {event.venue}
               </CardDescription>
-              <span className="text-xs text-muted-foreground">Hosted by {event.organizer}</span>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                {event.organizer === "Real Golf Tour" && (
+                  <img src={realGolfTourLogo} alt="Real Golf Tour" className="w-5 h-5 rounded-full object-cover" />
+                )}
+                <span>Hosted by {event.organizer}</span>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2 text-sm">
