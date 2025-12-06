@@ -174,8 +174,8 @@ export const EventsTab = () => {
           description: `You're registered for ${event.round} - ${event.region}.`,
         });
       } else if (data?.url) {
-        // Redirect to Stripe checkout
-        window.open(data.url, "_blank");
+        // Redirect to Stripe checkout in same tab
+        window.location.href = data.url;
       }
     } catch (err: any) {
       toast({
