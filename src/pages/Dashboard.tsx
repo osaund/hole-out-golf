@@ -142,10 +142,10 @@ const Dashboard = () => {
           <header className="border-b bg-card shadow-soft p-4 flex items-center gap-4">
             <SidebarTrigger />
             <div className="flex items-center gap-3">
-              <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 object-contain" />
-              <div className="flex flex-col">
-                <span className="font-bold text-lg leading-tight">Hole Out Golf</span>
-                <span className="text-sm text-muted-foreground capitalize">{activeTab}</span>
+              <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 object-contain flex-shrink-0" />
+              <div className="flex flex-col justify-center">
+                <span className="font-bold text-base leading-none">Hole Out Golf</span>
+                <span className="text-xs text-muted-foreground capitalize leading-none mt-1">{activeTab}</span>
               </div>
             </div>
             <div className="ml-auto flex items-center gap-2">
