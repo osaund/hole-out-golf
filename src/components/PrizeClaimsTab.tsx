@@ -1,16 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Trophy, Calendar, Plus } from "lucide-react";
+import { Trophy, Calendar } from "lucide-react";
 import { format } from "date-fns";
 
 interface PrizeClaimsTabProps {
   claims: any[];
   courses: any[];
-  onOpenForm: () => void;
 }
 
-export const PrizeClaimsTab = ({ claims, courses, onOpenForm }: PrizeClaimsTabProps) => {
+export const PrizeClaimsTab = ({ claims, courses }: PrizeClaimsTabProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "approved":
@@ -38,14 +36,7 @@ export const PrizeClaimsTab = ({ claims, courses, onOpenForm }: PrizeClaimsTabPr
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button onClick={onOpenForm} className="gap-2">
-          <Plus className="w-4 h-4" />
-          Submit Claim
-        </Button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {claims.map((claim) => (
         <Card key={claim.id} className="shadow-card hover:shadow-soft transition-all border border-border/50 bg-card overflow-hidden">
           <CardContent className="p-6">
@@ -75,9 +66,8 @@ export const PrizeClaimsTab = ({ claims, courses, onOpenForm }: PrizeClaimsTabPr
               </div>
             )}
           </CardContent>
-      </Card>
+        </Card>
       ))}
-      </div>
     </div>
   );
 };

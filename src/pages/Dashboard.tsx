@@ -121,7 +121,7 @@ const Dashboard = () => {
       case "shots":
         return <ShotsTab shots={shots} courses={courses} />;
       case "claims":
-        return <PrizeClaimsTab claims={prizeClaims} courses={courses} onOpenForm={() => setFormOpen(true)} />;
+        return <PrizeClaimsTab claims={prizeClaims} courses={courses} />;
       default:
         return <CoursesTab courses={courses} />;
     }
@@ -158,6 +158,7 @@ const Dashboard = () => {
           </header>
 
           <div className="flex-1 p-4 md:p-8 overflow-auto">
+            <PrizeClaimBanner onOpenForm={() => setFormOpen(true)} />
             {renderContent()}
           </div>
         </main>
