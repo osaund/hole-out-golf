@@ -2,18 +2,16 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { PrizeClaimBanner } from "@/components/PrizeClaimBanner";
 import { PrizeClaimForm } from "@/components/PrizeClaimForm";
 import { CoursesTab } from "@/components/CoursesTab";
 import { PrizeClaimsTab } from "@/components/PrizeClaimsTab";
 import { ShotsTab } from "@/components/ShotsTab";
 import { EventsTab } from "@/components/EventsTab";
-import { LogOut, UserCircle, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
-import logo from "@/assets/logo.png";
 
 const Dashboard = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -28,7 +26,7 @@ const Dashboard = () => {
   
   // Default to events tab if returning from event payment
   const eventSuccess = searchParams.get("event_success");
-  const defaultTab = eventSuccess ? "events" : "courses";
+  const [activeTab, setActiveTab] = useState(eventSuccess ? "events" : "courses");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -112,81 +110,52 @@ const Dashboard = () => {
     return null;
   }
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case "courses":
+        return <CoursesTab courses={courses} />;
+      case "events":
+        return <EventsTab />;
+      case "shots":
+        return <ShotsTab shots={shots} courses={courses} />;
+      case "claims":
+        return <PrizeClaimsTab claims={prizeClaims} courses={courses} />;
+      default:
+        return <CoursesTab courses={courses} />;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card shadow-soft">
-        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0" />
-            <h1 className="text-lg sm:text-2xl font-bold truncate">Hole Out Golf</h1>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <DashboardSidebar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          isAdmin={isAdmin}
+          onLogout={handleLogout}
+        />
+        
+        <main className="flex-1 flex flex-col">
+          <header className="border-b bg-card shadow-soft p-4 flex items-center gap-4">
+            <SidebarTrigger />
+            <h1 className="text-xl font-semibold capitalize">{activeTab}</h1>
+          </header>
+
+          <div className="flex-1 p-4 md:p-8 overflow-auto">
+            <PrizeClaimBanner onOpenForm={() => setFormOpen(true)} />
+            {renderContent()}
           </div>
-          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {isAdmin && (
-              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="hidden sm:flex">
-                <Shield className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Admin</span>
-              </Button>
-            )}
-            {isAdmin && (
-              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="sm:hidden">
-                <Shield className="w-4 h-4" />
-              </Button>
-            )}
-            <Button variant="ghost" size="sm" onClick={() => navigate("/settings")} className="hidden sm:flex">
-              <UserCircle className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">Profile</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/settings")} className="sm:hidden">
-              <UserCircle className="w-4 h-4" />
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="hidden sm:flex">
-              <LogOut className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">Logout</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="sm:hidden">
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      </header>
+        </main>
 
-      <main className="container mx-auto px-4 py-8">
-        <PrizeClaimBanner onOpenForm={() => setFormOpen(true)} />
-
-        <Tabs defaultValue={defaultTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="courses">Courses</TabsTrigger>
-            <TabsTrigger value="events">Events</TabsTrigger>
-            <TabsTrigger value="shots">Shots</TabsTrigger>
-            <TabsTrigger value="claims">Claims</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="courses">
-            <CoursesTab courses={courses} />
-          </TabsContent>
-
-          <TabsContent value="events">
-            <EventsTab />
-          </TabsContent>
-
-          <TabsContent value="shots">
-            <ShotsTab shots={shots} courses={courses} />
-          </TabsContent>
-
-          <TabsContent value="claims">
-            <PrizeClaimsTab claims={prizeClaims} courses={courses} />
-          </TabsContent>
-        </Tabs>
-      </main>
-
-      <PrizeClaimForm
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        courses={courses}
-        userId={session.user.id}
-        onSuccess={fetchData}
-      />
-    </div>
+        <PrizeClaimForm
+          open={formOpen}
+          onOpenChange={setFormOpen}
+          courses={courses}
+          userId={session.user.id}
+          onSuccess={fetchData}
+        />
+      </div>
+    </SidebarProvider>
   );
 };
 
