@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Trophy, Target, Ticket, CheckCircle, History } from "lucide-react";
+import { Calendar, MapPin, Trophy, Target, Ticket, CheckCircle, History, ChevronDown } from "lucide-react";
 import realGolfTourLogo from "@/assets/real-golf-tour-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { format } from "date-fns";
 
 interface Event {
@@ -156,42 +161,49 @@ export const EventsTab = () => {
 
   return (
     <div className="space-y-6">
-      {/* My Events History */}
+      {/* My Events History - Collapsible */}
       {attendedEvents.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <History className="w-5 h-5 text-primary" />
-            <h3 className="font-semibold">My Event History</h3>
-            <Badge variant="secondary">{attendedEvents.length} played</Badge>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {attendedEvents.map((reg) => (
-              <Card key={reg.id} className="bg-muted/50">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="text-xs">
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      Attended
-                    </Badge>
-                  </div>
-                  <CardDescription className="font-medium text-foreground">
-                    {reg.events.round} - {reg.events.region}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    {reg.events.venue}
-                  </div>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Calendar className="w-4 h-4" />
-                    {formatEventDate(reg.events.date)}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="w-full justify-between p-3 h-auto bg-muted/50 hover:bg-muted">
+              <div className="flex items-center gap-2">
+                <History className="w-5 h-5 text-primary" />
+                <span className="font-semibold">My Event History</span>
+                <Badge variant="secondary">{attendedEvents.length} played</Badge>
+              </div>
+              <ChevronDown className="w-4 h-4 transition-transform [[data-state=open]>&]:rotate-180" />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {attendedEvents.map((reg) => (
+                <Card key={reg.id} className="bg-muted/50">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className="text-xs">
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Attended
+                      </Badge>
+                    </div>
+                    <CardDescription className="font-medium text-foreground">
+                      {reg.events.round} - {reg.events.region}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      {reg.events.venue}
+                    </div>
+                    <div className="flex items-center gap-1 mt-1">
+                      <Calendar className="w-4 h-4" />
+                      {formatEventDate(reg.events.date)}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       )}
 
       {/* Upcoming Events */}
