@@ -93,7 +93,7 @@ export const EventsTab = () => {
                   variant={event.enabled ? "default" : "secondary"}
                   className="mb-2"
                 >
-                  {event.round}
+                  {event.region}
                 </Badge>
                 {!event.enabled && (
                   <Badge variant="outline" className="text-xs">
@@ -101,7 +101,6 @@ export const EventsTab = () => {
                   </Badge>
                 )}
               </div>
-              <CardTitle className="text-xl">{event.region}</CardTitle>
               <CardDescription className="flex items-center gap-1">
                 <MapPin className="w-4 h-4" />
                 {event.venue}
