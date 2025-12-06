@@ -445,7 +445,7 @@ export default function Admin() {
                     <SelectContent className="bg-popover">
                       {events.filter((event) => event.enabled).map((event) => (
                         <SelectItem key={event.id} value={event.id}>
-                          {event.round} - {event.venue} ({format(new Date(event.date), "PP")}) - £{event.entry_fee || 0}
+                          {event.round} - {event.venue} ({format(new Date(event.date), "PP")}){event.entry_fee ? ` - £${event.entry_fee}` : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
