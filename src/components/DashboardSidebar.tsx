@@ -23,8 +23,8 @@ interface DashboardSidebarProps {
 }
 
 const menuItems = [
-  { id: "courses", title: "Courses", icon: MapPin },
   { id: "events", title: "Events", icon: Calendar },
+  { id: "courses", title: "Courses", icon: MapPin },
   { id: "shots", title: "Shots", icon: Target },
   { id: "claims", title: "Claims", icon: Trophy },
 ];
