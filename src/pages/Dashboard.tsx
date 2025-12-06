@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,13 @@ const Dashboard = () => {
   const [shots, setShots] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { isAdmin } = useUserRole();
+  
+  // Default to events tab if returning from event payment
+  const eventSuccess = searchParams.get("event_success");
+  const defaultTab = eventSuccess ? "events" : "courses";
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -148,7 +153,7 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-8">
         <PrizeClaimBanner onOpenForm={() => setFormOpen(true)} />
 
-        <Tabs defaultValue="courses" className="space-y-6">
+        <Tabs defaultValue={defaultTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="courses">Courses</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
