@@ -139,7 +139,7 @@ const Dashboard = () => {
         />
         
         <main className="flex-1 flex flex-col">
-          <header className="border-b bg-card shadow-soft p-4 flex items-center gap-4">
+          <header className="sticky top-0 z-10 border-b bg-card shadow-soft p-4 flex items-center gap-4">
             <SidebarTrigger />
             <div className="flex items-center gap-2.5">
               <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 object-contain" />
