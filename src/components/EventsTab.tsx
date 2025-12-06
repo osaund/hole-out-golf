@@ -141,7 +141,7 @@ export const EventsTab = () => {
                 <MapPin className="w-4 h-4" />
                 {event.venue}
               </CardDescription>
-              <span className="text-xs text-muted-foreground">Hosted by {event.organizer}</span>
+              <span className="text-xs text-muted-foreground pl-5">Hosted by {event.organizer}</span>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2 text-sm">
