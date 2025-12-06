@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Trophy, Target, Ticket, CheckCircle, History, ChevronDown } from "lucide-react";
+import { Calendar, MapPin, Trophy, Target, Ticket, CheckCircle, History } from "lucide-react";
 import realGolfTourLogo from "@/assets/real-golf-tour-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,11 +13,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { format } from "date-fns";
 
 interface Event {
@@ -160,54 +164,24 @@ export const EventsTab = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* My Events History - Collapsible */}
-      {attendedEvents.length > 0 && (
-        <Collapsible>
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" className="w-full justify-between p-3 h-auto bg-muted/50 hover:bg-muted">
-              <div className="flex items-center gap-2">
-                <History className="w-5 h-5 text-primary" />
-                <span className="font-semibold">My Event History</span>
-                <Badge variant="secondary">{attendedEvents.length} played</Badge>
-              </div>
-              <ChevronDown className="w-4 h-4 transition-transform [[data-state=open]>&]:rotate-180" />
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {attendedEvents.map((reg) => (
-                <Card key={reg.id} className="bg-muted/50">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-xs">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        Attended
-                      </Badge>
-                    </div>
-                    <CardDescription className="font-medium text-foreground">
-                      {reg.events.round} - {reg.events.region}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4" />
-                      {reg.events.venue}
-                    </div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Calendar className="w-4 h-4" />
-                      {formatEventDate(reg.events.date)}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      )}
+    <Tabs defaultValue="upcoming" className="space-y-6">
+      <TabsList>
+        <TabsTrigger value="upcoming" className="flex items-center gap-2">
+          <Calendar className="w-4 h-4" />
+          Upcoming Events
+        </TabsTrigger>
+        {userId && (
+          <TabsTrigger value="history" className="flex items-center gap-2">
+            <History className="w-4 h-4" />
+            My History
+            {attendedEvents.length > 0 && (
+              <Badge variant="secondary" className="ml-1">{attendedEvents.length}</Badge>
+            )}
+          </TabsTrigger>
+        )}
+      </TabsList>
 
-      {/* Upcoming Events */}
-      <div className="space-y-4">
+      <TabsContent value="upcoming" className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <span className="text-muted-foreground text-sm">2026 Season · {filteredEvents.length} events</span>
           <Select value={selectedOrganizer} onValueChange={setSelectedOrganizer}>
@@ -302,7 +276,49 @@ export const EventsTab = () => {
             );
           })}
         </div>
-      </div>
-    </div>
+      </TabsContent>
+
+      <TabsContent value="history">
+        {attendedEvents.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            <History className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>No events attended yet.</p>
+            <p className="text-sm">Register for an event and start playing!</p>
+          </div>
+        ) : (
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Event</TableHead>
+                  <TableHead>Venue</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Organizer</TableHead>
+                  <TableHead className="text-right">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {attendedEvents.map((reg) => (
+                  <TableRow key={reg.id}>
+                    <TableCell className="font-medium">
+                      {reg.events.round} - {reg.events.region}
+                    </TableCell>
+                    <TableCell>{reg.events.venue}</TableCell>
+                    <TableCell>{formatEventDate(reg.events.date)}</TableCell>
+                    <TableCell>{reg.events.organizer}</TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant="outline" className="text-green-600 border-green-600">
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Attended
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </TabsContent>
+    </Tabs>
   );
 };
