@@ -99,7 +99,7 @@ export const EventsTab = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 mb-6">
-        <span className="text-muted-foreground text-sm">2026 Season</span>
+        <span className="text-muted-foreground text-sm">2026 Season · {filteredEvents.length} events</span>
         <Select value={selectedOrganizer} onValueChange={setSelectedOrganizer}>
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Filter by host" />
