@@ -129,7 +129,7 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="min-h-screen flex w-full bg-gradient-subtle">
         <DashboardSidebar
           activeTab={activeTab}
           onTabChange={setActiveTab}
@@ -139,20 +139,20 @@ const Dashboard = () => {
         />
         
         <main className="flex-1 flex flex-col">
-          <header className="sticky top-0 z-10 border-b bg-card shadow-soft p-4 flex items-center gap-4">
+          <header className="sticky top-0 z-10 border-b bg-card/80 backdrop-blur-md shadow-soft p-4 flex items-center gap-4">
             <SidebarTrigger />
             <div className="flex items-center gap-2.5">
               <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 object-contain" />
               <div>
-                <p className="font-bold text-sm leading-tight">Hole Out Golf</p>
+                <p className="font-bold text-sm leading-tight text-foreground">Hole Out Golf</p>
                 <p className="text-[11px] text-muted-foreground capitalize leading-tight">{activeTab}</p>
               </div>
             </div>
             <div className="ml-auto flex items-center gap-2">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
+              <Button variant="ghost" size="icon" onClick={() => navigate("/settings")} className="hover:bg-primary/10">
                 <UserCircle className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={handleLogout}>
+              <Button variant="ghost" size="icon" onClick={handleLogout} className="hover:bg-primary/10">
                 <LogOut className="h-5 w-5" />
               </Button>
             </div>

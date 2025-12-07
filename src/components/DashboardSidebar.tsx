@@ -43,11 +43,11 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
     setOpenMobile(false);
   };
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border p-4">
+    <Sidebar className="bg-gradient-card border-r border-sidebar-border">
+      <SidebarHeader className="border-b border-sidebar-border p-4 bg-sidebar/50">
         <div className="flex items-center gap-3">
           <img src={logo} alt="Hole Out Golf Logo" className="w-8 h-8 object-contain" />
-          <span className="font-bold text-lg">Hole Out Golf</span>
+          <span className="font-bold text-lg text-sidebar-foreground">Hole Out Golf</span>
         </div>
       </SidebarHeader>
       
@@ -133,7 +133,7 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border p-4">
+      <SidebarFooter className="border-t border-sidebar-border p-4 bg-sidebar/50">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={() => handleNavigate("/settings")}>
