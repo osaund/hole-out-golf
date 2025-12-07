@@ -9,10 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, MapPin, Calendar as CalendarEventIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useSubscription } from "@/contexts/SubscriptionContext";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface PrizeClaimFormProps {
   open: boolean;
@@ -23,7 +24,10 @@ interface PrizeClaimFormProps {
 }
 
 export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess }: PrizeClaimFormProps) => {
+  const [claimType, setClaimType] = useState<"course" | "event">("course");
   const [courseId, setCourseId] = useState("");
+  const [eventId, setEventId] = useState("");
+  const [events, setEvents] = useState<any[]>([]);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedShotId, setSelectedShotId] = useState("");
@@ -35,10 +39,23 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
   const { subscribed } = useSubscription();
 
   useEffect(() => {
-    if (open && subscribed) {
-      fetchRecentShots();
+    if (open) {
+      fetchEvents();
+      if (subscribed) {
+        fetchRecentShots();
+      }
     }
   }, [open, subscribed]);
+
+  const fetchEvents = async () => {
+    const { data } = await supabase
+      .from("events")
+      .select("*")
+      .eq("enabled", true)
+      .order("date", { ascending: false });
+    
+    setEvents(data || []);
+  };
 
   const fetchRecentShots = async () => {
     const { data } = await supabase
@@ -56,11 +73,12 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
     setLoading(true);
 
     try {
-      let finalCourseId = courseId;
+      let finalCourseId = claimType === "course" ? courseId : null;
+      let finalEventId = claimType === "event" ? eventId : null;
       let finalDate = claimDate;
 
       // If subscribed and a shot is selected, use that shot's details
-      if (subscribed && selectedShotId) {
+      if (subscribed && selectedShotId && claimType === "course") {
         const selectedShot = recentShots.find(s => s.id === selectedShotId);
         if (selectedShot) {
           finalCourseId = selectedShot.course_id;
@@ -68,8 +86,14 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         }
       }
 
-      if (!finalCourseId || !finalDate) {
-        throw new Error("Please select all required fields");
+      if (claimType === "course" && !finalCourseId) {
+        throw new Error("Please select a course");
+      }
+      if (claimType === "event" && !finalEventId) {
+        throw new Error("Please select an event");
+      }
+      if (!finalDate) {
+        throw new Error("Please select a date");
       }
 
       // Check if user has already submitted a claim today
@@ -91,9 +115,18 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         return;
       }
 
-      // Get the selected course to get prize amount
-      const selectedCourse = courses.find(c => c.id === finalCourseId);
-      const prizeAmount = selectedCourse?.prize_amount || null;
+      // Get prize amount based on type
+      let prizeAmount = null;
+      let locationName = "";
+      if (claimType === "course" && finalCourseId) {
+        const selectedCourse = courses.find(c => c.id === finalCourseId);
+        prizeAmount = selectedCourse?.prize_amount || null;
+        locationName = selectedCourse?.name || "";
+      } else if (claimType === "event" && finalEventId) {
+        const selectedEvent = events.find(e => e.id === finalEventId);
+        prizeAmount = selectedEvent?.nearest_pin_prize || null;
+        locationName = `${selectedEvent?.venue} - ${selectedEvent?.round}` || "";
+      }
 
       // Get user profile for email
       const { data: profile } = await supabase
@@ -107,10 +140,11 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       const { error } = await supabase.from("prize_claims").insert({
         user_id: userId,
         course_id: finalCourseId,
+        event_id: finalEventId,
         notes,
         status: "pending",
         claim_date: finalDate.toISOString(),
-        shot_id: subscribed ? selectedShotId : null,
+        shot_id: subscribed && claimType === "course" ? selectedShotId : null,
         prize_amount: prizeAmount,
         time_of_hole_in_one: timeOfHoleInOne || null,
         tee_time: teeTime || null,
@@ -122,7 +156,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       try {
         await supabase.functions.invoke('send-prize-claim-email', {
           body: {
-            courseName: selectedCourse?.name,
+            courseName: locationName,
             userEmail: user?.email,
             userName: profile?.full_name || user?.email,
             teeTime: timeOfHoleInOne,
@@ -132,7 +166,6 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         });
       } catch (emailError) {
         console.error("Failed to send email:", emailError);
-        // Don't fail the claim submission if email fails
       }
 
       toast({
@@ -141,12 +174,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       });
 
       onOpenChange(false);
-      setCourseId("");
-      setNotes("");
-      setSelectedShotId("");
-      setClaimDate(undefined);
-      setTimeOfHoleInOne("");
-      setTeeTime("");
+      resetForm();
       onSuccess();
     } catch (error: any) {
       const errorMessage = error.message.includes("unique_prize_claim_per_day")
@@ -163,6 +191,17 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
     }
   };
 
+  const resetForm = () => {
+    setClaimType("course");
+    setCourseId("");
+    setEventId("");
+    setNotes("");
+    setSelectedShotId("");
+    setClaimDate(undefined);
+    setTimeOfHoleInOne("");
+    setTeeTime("");
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
@@ -174,22 +213,66 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="course">Golf Course</Label>
-            <Select value={courseId} onValueChange={setCourseId} required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a course" />
-              </SelectTrigger>
-              <SelectContent>
-                {courses.filter(course => !course.coming_soon).map((course) => (
-                  <SelectItem key={course.id} value={course.id}>
-                    {course.name} - {course.location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label>Claim Type</Label>
+            <RadioGroup 
+              value={claimType} 
+              onValueChange={(value) => setClaimType(value as "course" | "event")}
+              className="flex gap-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="course" id="course-type" />
+                <Label htmlFor="course-type" className="flex items-center gap-1.5 cursor-pointer">
+                  <MapPin className="h-4 w-4" />
+                  Course
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="event" id="event-type" />
+                <Label htmlFor="event-type" className="flex items-center gap-1.5 cursor-pointer">
+                  <CalendarEventIcon className="h-4 w-4" />
+                  Event
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
 
-          {subscribed && (
+          {claimType === "course" && (
+            <div className="space-y-2">
+              <Label htmlFor="course">Golf Course</Label>
+              <Select value={courseId} onValueChange={setCourseId} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a course" />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses.filter(course => !course.coming_soon).map((course) => (
+                    <SelectItem key={course.id} value={course.id}>
+                      {course.name} - {course.location}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {claimType === "event" && (
+            <div className="space-y-2">
+              <Label htmlFor="event">Event</Label>
+              <Select value={eventId} onValueChange={setEventId} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select an event" />
+                </SelectTrigger>
+                <SelectContent>
+                  {events.map((event) => (
+                    <SelectItem key={event.id} value={event.id}>
+                      {event.venue} - {event.round} ({format(new Date(event.date), "PP")})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {subscribed && claimType === "course" && (
             <div className="space-y-2">
               <Label htmlFor="shot">Select Recent Shot (Optional)</Label>
               <Select value={selectedShotId} onValueChange={setSelectedShotId}>

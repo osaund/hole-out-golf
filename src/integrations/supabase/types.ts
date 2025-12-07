@@ -131,8 +131,9 @@ export type Database = {
       prize_claims: {
         Row: {
           claim_date: string
-          course_id: string
+          course_id: string | null
           created_at: string
+          event_id: string | null
           id: string
           notes: string | null
           prize_amount: number | null
@@ -144,8 +145,9 @@ export type Database = {
         }
         Insert: {
           claim_date?: string
-          course_id: string
+          course_id?: string | null
           created_at?: string
+          event_id?: string | null
           id?: string
           notes?: string | null
           prize_amount?: number | null
@@ -157,8 +159,9 @@ export type Database = {
         }
         Update: {
           claim_date?: string
-          course_id?: string
+          course_id?: string | null
           created_at?: string
+          event_id?: string | null
           id?: string
           notes?: string | null
           prize_amount?: number | null
@@ -174,6 +177,13 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prize_claims_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
           {
