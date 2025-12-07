@@ -158,7 +158,7 @@ const Dashboard = () => {
           </header>
 
           <div className="flex-1 p-4 md:p-8 overflow-auto">
-            <PrizeClaimBanner onOpenForm={() => setFormOpen(true)} />
+            {activeTab === "claims" && <PrizeClaimBanner onOpenForm={() => setFormOpen(true)} />}
             {renderContent()}
           </div>
         </main>
