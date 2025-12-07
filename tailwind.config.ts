@@ -57,21 +57,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        success: {
-          DEFAULT: "hsl(var(--success))",
-          foreground: "hsl(var(--success-foreground))",
-        },
-      },
-      backgroundImage: {
-        'gradient-subtle': 'var(--gradient-subtle)',
-        'gradient-hero': 'var(--gradient-hero)',
-        'gradient-prize': 'var(--gradient-prize)',
-        'gradient-card': 'var(--gradient-card)',
-      },
-      boxShadow: {
-        'soft': 'var(--shadow-soft)',
-        'card': 'var(--shadow-card)',
-        'glow': 'var(--shadow-glow)',
       },
       borderRadius: {
         lg: "var(--radius)",
