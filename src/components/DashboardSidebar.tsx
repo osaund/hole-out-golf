@@ -1,4 +1,4 @@
-import { MapPin, Calendar, Target, Trophy, Shield, UserCircle, LogOut, Mail, Plus } from "lucide-react";
+import { MapPin, Calendar, Target, Trophy, Shield, UserCircle, LogOut, Mail, PartyPopper } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -83,7 +83,7 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
                   }}
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Plus className="h-4 w-4" />
+                  <PartyPopper className="h-4 w-4" />
                   <span>Submit Claim</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
