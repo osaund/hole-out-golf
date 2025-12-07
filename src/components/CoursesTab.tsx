@@ -138,12 +138,13 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
             <p className="text-sm text-muted-foreground">
               Our courses are equipped with permanent camera fixtures to capture your shots.
             </p>
-            <div className="flex flex-wrap gap-4 mt-3">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <CreditCard className="h-4 w-4 text-primary" />
                 <span>Pay per play</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span className="text-sm text-muted-foreground font-medium">OR</span>
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4 text-primary" />
                 <span>Subscribe for daily access</span>
               </div>
