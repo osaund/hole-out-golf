@@ -1,4 +1,4 @@
-import { MapPin, Calendar, Target, Trophy, Shield, UserCircle, LogOut, Mail } from "lucide-react";
+import { MapPin, Calendar, Target, Trophy, Shield, UserCircle, LogOut, Mail, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -20,6 +20,7 @@ interface DashboardSidebarProps {
   onTabChange: (tab: string) => void;
   isAdmin: boolean;
   onLogout: () => void;
+  onOpenClaimForm: () => void;
 }
 
 const menuItems = [
@@ -29,7 +30,7 @@ const menuItems = [
   { id: "claims", title: "Claims", icon: Trophy },
 ];
 
-export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout }: DashboardSidebarProps) {
+export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, onOpenClaimForm }: DashboardSidebarProps) {
   const navigate = useNavigate();
   const { setOpenMobile } = useSidebar();
 
@@ -67,6 +68,18 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout }: 
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => {
+                    onOpenClaimForm();
+                    setOpenMobile(false);
+                  }}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Submit Prize Claim</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

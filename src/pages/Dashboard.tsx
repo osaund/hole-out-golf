@@ -135,6 +135,7 @@ const Dashboard = () => {
           onTabChange={setActiveTab}
           isAdmin={isAdmin}
           onLogout={handleLogout}
+          onOpenClaimForm={() => setFormOpen(true)}
         />
         
         <main className="flex-1 flex flex-col">
