@@ -143,7 +143,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
                 <CreditCard className="h-4 w-4 text-primary" />
                 <span>Pay per play</span>
               </div>
-              <span className="text-sm text-muted-foreground font-medium">OR</span>
+              <span className="text-sm text-muted-foreground">or</span>
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4 text-primary" />
                 <span>Subscribe for daily access</span>
