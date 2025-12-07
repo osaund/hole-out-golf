@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { MapPin, Target, Play, Info, X } from "lucide-react";
+import { MapPin, Target, Play, Info, X, Camera, CreditCard, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SubscribeDialog } from "@/components/SubscribeDialog";
@@ -131,6 +131,28 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
 
   return (
     <>
+      <div className="mb-6 p-4 rounded-lg bg-card border border-border shadow-soft">
+        <div className="flex items-start gap-3">
+          <Camera className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+          <div>
+            <h3 className="font-semibold text-foreground mb-1">Permanent Camera Fixtures</h3>
+            <p className="text-sm text-muted-foreground">
+              Our courses are equipped with permanent camera fixtures to capture your shots.
+            </p>
+            <div className="flex flex-wrap gap-4 mt-3">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <CreditCard className="h-4 w-4 text-primary" />
+                <span>Pay per play</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Calendar className="h-4 w-4 text-primary" />
+                <span>Subscribe for daily access</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {!alertDismissed && (
         <Alert className="mb-4 py-2 pl-3 pr-8 border-l-4 border-l-primary border-y-0 border-r-0 relative">
           <Button
