@@ -27,7 +27,6 @@ const menuItems = [
   { id: "events", title: "Events", icon: Calendar },
   { id: "courses", title: "Courses", icon: MapPin },
   { id: "shots", title: "Shots", icon: Target },
-  { id: "claims", title: "Claims", icon: Trophy },
 ];
 
 export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, onOpenClaimForm }: DashboardSidebarProps) {
@@ -68,6 +67,23 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Prizes</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={activeTab === "claims"}
+                  onClick={() => handleTabChange("claims")}
+                >
+                  <Trophy className="h-4 w-4" />
+                  <span>My Claims</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => {
@@ -77,7 +93,7 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   <Plus className="h-4 w-4" />
-                  <span>Submit Prize Claim</span>
+                  <span>Submit Claim</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
