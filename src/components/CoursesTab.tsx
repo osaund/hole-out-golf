@@ -135,7 +135,6 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
         <div className="flex items-start gap-3">
           <Camera className="h-5 w-5 text-primary mt-0.5 shrink-0" />
           <div>
-            <h3 className="font-semibold text-foreground mb-1">Permanent Camera Fixtures</h3>
             <p className="text-sm text-muted-foreground">
               Our courses are equipped with permanent camera fixtures to capture your shots.
             </p>
