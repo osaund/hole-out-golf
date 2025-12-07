@@ -131,21 +131,26 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
 
   return (
     <>
-      <div className="mb-6 p-4 rounded-lg bg-card border border-border shadow-soft">
+      <div className="mb-6 p-4 rounded-lg bg-gradient-card border border-border shadow-soft">
         <div className="flex items-start gap-3">
-          <Camera className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+          <div className="p-2 rounded-full bg-primary/10">
+            <Camera className="h-5 w-5 text-primary" />
+          </div>
           <div>
+            <p className="text-sm text-foreground font-medium mb-1">
+              Camera-equipped courses
+            </p>
             <p className="text-sm text-muted-foreground">
               Our courses are equipped with permanent camera fixtures to capture your shots.
             </p>
-            <div className="flex flex-wrap items-center gap-2 mt-2">
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <CreditCard className="h-4 w-4 text-primary" />
+            <div className="flex flex-wrap items-center gap-3 mt-3">
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
+                <CreditCard className="h-3.5 w-3.5 text-primary" />
                 <span>Pay per play</span>
               </div>
               <span className="text-sm text-muted-foreground">or</span>
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4 text-primary" />
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
+                <Calendar className="h-3.5 w-3.5 text-primary" />
                 <span>Subscribe for daily access</span>
               </div>
             </div>
@@ -170,41 +175,42 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
       )}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {sortedCourses.map((course) => (
-        <Card key={course.id} className="shadow-soft hover:shadow-card transition-all overflow-hidden">
+        <Card key={course.id} className="bg-gradient-card shadow-soft hover:shadow-card transition-all duration-300 overflow-hidden group border-border/50">
           {course.image_url && (
             <div className="relative h-48 overflow-hidden">
               <img
                 src={courseImages[course.image_url]}
                 alt={course.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               {course.coming_soon && (
-                <Badge className="absolute top-4 right-4 bg-accent text-accent-foreground shadow-lg">
+                <Badge className="absolute top-4 right-4 bg-accent text-accent-foreground shadow-glow">
                   Coming Soon
                 </Badge>
               )}
             </div>
           )}
-          <CardHeader>
-            <CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-foreground">
               {course.name}
             </CardTitle>
-            <CardDescription className="flex items-center gap-1">
+            <CardDescription className="flex items-center gap-1 text-muted-foreground">
               <MapPin className="w-4 h-4" />
               {course.location}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {!course.coming_soon && course.prize_amount && (
-              <div className="p-4 bg-gradient-prize rounded-lg text-center">
+              <div className="p-4 bg-gradient-prize rounded-lg text-center shadow-glow/50">
                 <p className="text-sm font-medium text-secondary-foreground/80 mb-1">Prize Pool</p>
-                <p className="text-3xl font-bold text-secondary">£{course.prize_amount.toLocaleString()}</p>
+                <p className="text-3xl font-bold text-secondary-foreground">£{course.prize_amount.toLocaleString()}</p>
               </div>
             )}
             {!course.coming_soon && (
               <Button
                 onClick={() => handlePlayNow(course)}
-                className="w-full"
+                className="w-full shadow-soft hover:shadow-card transition-all"
                 size="lg"
                 disabled={playedToday.has(course.id)}
               >
