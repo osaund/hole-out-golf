@@ -77,15 +77,6 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  isActive={activeTab === "claims"}
-                  onClick={() => handleTabChange("claims")}
-                >
-                  <Trophy className="h-4 w-4" />
-                  <span>My Claims</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
                   onClick={() => {
                     onOpenClaimForm();
                     setOpenMobile(false);
@@ -94,6 +85,15 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
                 >
                   <Plus className="h-4 w-4" />
                   <span>Submit Claim</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={activeTab === "claims"}
+                  onClick={() => handleTabChange("claims")}
+                >
+                  <Trophy className="h-4 w-4" />
+                  <span>My Claims</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
