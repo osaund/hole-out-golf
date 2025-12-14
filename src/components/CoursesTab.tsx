@@ -31,7 +31,7 @@ const courseImages: Record<string, string> = {
   "salisbury-golf.jpg": salisburyGolf,
   "bibury-golf.jpg": biburyGolf,
   "grately-golf.jpg": gratelyGolf,
-  "ampfield-golf.jpg": ampfieldGolf,
+  // Ampfield uses a direct club URL, so no local mapping needed
 };
 
 export const CoursesTab = ({ courses }: CoursesTabProps) => {
@@ -171,23 +171,28 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
         </Alert>
       )}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {sortedCourses.map((course) => (
-        <Card key={course.id} className="shadow-soft hover:shadow-card transition-all overflow-hidden">
-          {course.image_url && (
-            <div className="relative h-48 overflow-hidden">
-              <img
-                src={courseImages[course.image_url]}
-                alt={course.name}
-                className="w-full h-full object-cover"
-              />
-              {course.coming_soon && (
-                <Badge className="absolute top-4 right-4 bg-accent text-accent-foreground shadow-lg">
-                  Coming Soon
-                </Badge>
+        {sortedCourses.map((course) => {
+          const imageSrc = course.image_url?.startsWith("http")
+            ? course.image_url
+            : (course.image_url ? courseImages[course.image_url] : undefined);
+
+          return (
+            <Card key={course.id} className="shadow-soft hover:shadow-card transition-all overflow-hidden">
+              {imageSrc && (
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={imageSrc}
+                    alt={course.name}
+                    className="w-full h-full object-cover"
+                  />
+                  {course.coming_soon && (
+                    <Badge className="absolute top-4 right-4 bg-accent text-accent-foreground shadow-lg">
+                      Coming Soon
+                    </Badge>
+                  )}
+                </div>
               )}
-            </div>
-          )}
-          <CardHeader>
+              <CardHeader>
             <CardTitle>
               {course.name}
             </CardTitle>
