@@ -31,7 +31,7 @@ const courseImages: Record<string, string> = {
   "salisbury-golf.jpg": salisburyGolf,
   "bibury-golf.jpg": biburyGolf,
   "grately-golf.jpg": gratelyGolf,
-  // Ampfield uses a direct club URL, so no local mapping needed
+  "ampfield-golf.jpg": ampfieldGolf,
 };
 
 export const CoursesTab = ({ courses }: CoursesTabProps) => {
