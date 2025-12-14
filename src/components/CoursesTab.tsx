@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import salisburyGolf from "@/assets/salisbury-golf.jpg";
 import biburyGolf from "@/assets/bibury-golf.jpg";
 import gratelyGolf from "@/assets/grately-golf.jpg";
+import ampfieldGolf from "@/assets/ampfield-golf.jpg";
 
 interface CoursesTabProps {
   courses: any[];
@@ -30,6 +31,7 @@ const courseImages: Record<string, string> = {
   "salisbury-golf.jpg": salisburyGolf,
   "bibury-golf.jpg": biburyGolf,
   "grately-golf.jpg": gratelyGolf,
+  "ampfield-golf.jpg": ampfieldGolf,
 };
 
 export const CoursesTab = ({ courses }: CoursesTabProps) => {
