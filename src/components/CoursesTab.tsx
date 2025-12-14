@@ -229,9 +229,10 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
                 Coming Soon
               </Button>
             )}
-          </CardContent>
-        </Card>
-      ))}
+            </CardContent>
+            </Card>
+          );
+        })}
       </div>
       <SubscribeDialog open={subscribeDialogOpen} onOpenChange={setSubscribeDialogOpen} />
     </>
