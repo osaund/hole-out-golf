@@ -58,7 +58,7 @@ const Course = () => {
   return (
     <div className="min-h-screen bg-background">
       {imageUrl && (
-        <div className="relative h-64 md:h-96 w-full">
+        <div className="relative h-80 md:h-[28rem] w-full">
           <img
             src={imageUrl}
             alt={course.name}
