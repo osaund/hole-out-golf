@@ -276,6 +276,51 @@ export type Database = {
           },
         ]
       }
+      single_play_credits: {
+        Row: {
+          course_id: string | null
+          created_at: string
+          id: string
+          purchased_at: string
+          stripe_session_id: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          purchased_at?: string
+          stripe_session_id: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          purchased_at?: string
+          stripe_session_id?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "single_play_credits_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "single_play_credits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null

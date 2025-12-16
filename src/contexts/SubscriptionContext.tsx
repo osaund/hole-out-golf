@@ -9,7 +9,10 @@ interface SubscriptionContextType {
   loading: boolean;
   renewalDate: string | null;
   isCancelled: boolean;
+  hasSinglePlayCredit: boolean;
   checkSubscription: () => Promise<void>;
+  checkSinglePlayCredits: () => Promise<void>;
+  useSinglePlayCredit: (courseId: string) => Promise<boolean>;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType>({
@@ -19,7 +22,10 @@ const SubscriptionContext = createContext<SubscriptionContextType>({
   loading: true,
   renewalDate: null,
   isCancelled: false,
+  hasSinglePlayCredit: false,
   checkSubscription: async () => {},
+  checkSinglePlayCredits: async () => {},
+  useSinglePlayCredit: async () => false,
 });
 
 export const useSubscription = () => useContext(SubscriptionContext);
@@ -31,6 +37,68 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const [renewalDate, setRenewalDate] = useState<string | null>(null);
   const [isCancelled, setIsCancelled] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [hasSinglePlayCredit, setHasSinglePlayCredit] = useState(false);
+
+  const checkSinglePlayCredits = async () => {
+    if (!user) {
+      setHasSinglePlayCredit(false);
+      return;
+    }
+
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Check for unused credits that haven't been used today
+      const { data: credits, error } = await supabase
+        .from("single_play_credits")
+        .select("id, used_at")
+        .eq("user_id", user.id)
+        .is("used_at", null);
+
+      if (error) throw error;
+      
+      setHasSinglePlayCredit((credits?.length || 0) > 0);
+    } catch (error) {
+      console.error("Error checking single play credits:", error);
+      setHasSinglePlayCredit(false);
+    }
+  };
+
+  const useSinglePlayCredit = async (courseId: string): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      // Find an unused credit
+      const { data: credits, error: fetchError } = await supabase
+        .from("single_play_credits")
+        .select("id")
+        .eq("user_id", user.id)
+        .is("used_at", null)
+        .limit(1);
+
+      if (fetchError || !credits || credits.length === 0) {
+        return false;
+      }
+
+      // Mark the credit as used
+      const { error: updateError } = await supabase
+        .from("single_play_credits")
+        .update({ 
+          used_at: new Date().toISOString(),
+          course_id: courseId
+        })
+        .eq("id", credits[0].id);
+
+      if (updateError) throw updateError;
+
+      // Refresh credits
+      await checkSinglePlayCredits();
+      return true;
+    } catch (error) {
+      console.error("Error using single play credit:", error);
+      return false;
+    }
+  };
 
   const checkSubscription = async () => {
     if (!session || !user) {
@@ -72,7 +140,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      // Don't set loading to false here - wait for subscription check
     });
 
     const {
@@ -80,7 +147,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      // Don't set loading to false here - wait for subscription check
     });
 
     return () => subscription.unsubscribe();
@@ -89,10 +155,45 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (session) {
       checkSubscription();
+      checkSinglePlayCredits();
       
       // Check subscription status every minute
-      const interval = setInterval(checkSubscription, 60000);
+      const interval = setInterval(() => {
+        checkSubscription();
+        checkSinglePlayCredits();
+      }, 60000);
       return () => clearInterval(interval);
+    }
+  }, [session]);
+
+  // Check for single play success from URL params
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const singlePlaySuccess = urlParams.get('single_play_success');
+    const sessionId = urlParams.get('session_id');
+    
+    if (singlePlaySuccess === 'true' && session) {
+      // Verify and record the payment
+      const verifyPayment = async () => {
+        try {
+          await supabase.functions.invoke("verify-single-play", {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: { session_id: sessionId },
+          });
+          
+          // Refresh credits
+          await checkSinglePlayCredits();
+          
+          // Clear URL params
+          window.history.replaceState({}, '', window.location.pathname);
+        } catch (error) {
+          console.error("Error verifying single play:", error);
+        }
+      };
+      
+      verifyPayment();
     }
   }, [session]);
 
@@ -105,7 +206,10 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         loading,
         renewalDate,
         isCancelled,
+        hasSinglePlayCredit,
         checkSubscription,
+        checkSinglePlayCredits,
+        useSinglePlayCredit,
       }}
     >
       {children}

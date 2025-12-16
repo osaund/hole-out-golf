@@ -36,10 +36,11 @@ const courseImages: Record<string, string> = {
 
 export const CoursesTab = ({ courses }: CoursesTabProps) => {
   const { toast } = useToast();
-  const { subscribed, user } = useSubscription();
+  const { subscribed, user, hasSinglePlayCredit, useSinglePlayCredit, checkSinglePlayCredits } = useSubscription();
   const [subscribeDialogOpen, setSubscribeDialogOpen] = useState(false);
   const [playedToday, setPlayedToday] = useState<Set<string>>(new Set());
   const [alertDismissed, setAlertDismissed] = useState(false);
+  const [singlePlayUsedToday, setSinglePlayUsedToday] = useState(false);
   const sortedCourses = sortCourses(courses);
 
   useEffect(() => {
@@ -57,6 +58,16 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
       if (todaysShots) {
         setPlayedToday(new Set(todaysShots.map(shot => shot.course_id)));
       }
+
+      // Check if user has used a single play credit today
+      const { data: usedCredits } = await supabase
+        .from("single_play_credits")
+        .select("id")
+        .eq("user_id", user.id)
+        .gte("used_at", `${today}T00:00:00`)
+        .lt("used_at", `${today}T23:59:59`);
+
+      setSinglePlayUsedToday((usedCredits?.length || 0) > 0);
     };
 
     checkPlayedCourses();
@@ -66,7 +77,10 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
     // Capture the exact timestamp when button is pressed
     const playedAt = new Date().toISOString();
     
-    if (!subscribed) {
+    // Check if user has subscription OR unused single play credit
+    const canPlay = subscribed || hasSinglePlayCredit;
+    
+    if (!canPlay) {
       setSubscribeDialogOpen(true);
       return;
     }
@@ -75,6 +89,16 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
       toast({
         title: "Not authenticated",
         description: "Please log in to play",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // If using single play credit, check if already used today
+    if (!subscribed && hasSinglePlayCredit && singlePlayUsedToday) {
+      toast({
+        title: "Already Played Today",
+        description: "You've already used your single play credit today. Subscribe for unlimited daily plays!",
         variant: "destructive",
       });
       return;
@@ -98,6 +122,20 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
           variant: "destructive",
         });
         return;
+      }
+
+      // If not subscribed, use single play credit
+      if (!subscribed && hasSinglePlayCredit) {
+        const creditUsed = await useSinglePlayCredit(course.id);
+        if (!creditUsed) {
+          toast({
+            title: "Error",
+            description: "Failed to use single play credit. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+        setSinglePlayUsedToday(true);
       }
 
       // Log the shot with the captured timestamp
@@ -213,10 +251,14 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
                 onClick={() => handlePlayNow(course)}
                 className="w-full"
                 size="lg"
-                disabled={playedToday.has(course.id)}
+                disabled={playedToday.has(course.id) || (!subscribed && singlePlayUsedToday && hasSinglePlayCredit)}
               >
                 <Play className="w-4 h-4 mr-2" />
-                {playedToday.has(course.id) ? "Played Today" : "Play Now"}
+                {playedToday.has(course.id) 
+                  ? "Played Today" 
+                  : (!subscribed && singlePlayUsedToday && hasSinglePlayCredit)
+                    ? "Credit Used Today"
+                    : "Play Now"}
               </Button>
             )}
             {course.coming_soon && (
