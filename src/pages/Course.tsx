@@ -127,7 +127,7 @@ const Course = () => {
                   rel="noopener noreferrer"
                   className="text-sm text-primary hover:underline"
                 >
-                  Visit holeoutgolf.co.uk
+                  holeoutgolf.co.uk
                 </a>
               </div>
             </div>
