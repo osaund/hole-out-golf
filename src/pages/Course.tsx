@@ -68,7 +68,7 @@ const Course = () => {
         </div>
       )}
       
-      <div className="container mx-auto px-4 py-8 -mt-20 relative z-10">
+      <div className="container mx-auto px-4 py-8 -mt-32 relative z-10">
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center">
             <img src={hogLogo} alt="HOG Logo" className="h-16 w-16 mx-auto mb-2" />
