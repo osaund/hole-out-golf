@@ -27,8 +27,8 @@ const Dashboard = () => {
   const { toast } = useToast();
   const { isAdmin } = useUserRole();
   
-  // Default to events tab
-  const [activeTab, setActiveTab] = useState("events");
+  // Default to courses tab
+  const [activeTab, setActiveTab] = useState("courses");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
