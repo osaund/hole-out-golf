@@ -91,6 +91,9 @@ const Course = () => {
             )}
 
             <div className="flex flex-col gap-4">
+              <p className="text-sm text-muted-foreground text-center">
+                Note: You can only play once per day at each course.
+              </p>
               <Button
                 variant="default"
                 size="lg"
