@@ -86,13 +86,21 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
         }
       }
 
+      // For event claims, use the event date
+      if (claimType === "event" && finalEventId) {
+        const selectedEvent = events.find(e => e.id === finalEventId);
+        if (selectedEvent) {
+          finalDate = new Date(selectedEvent.date);
+        }
+      }
+
       if (claimType === "course" && !finalCourseId) {
         throw new Error("Please select a course");
       }
       if (claimType === "event" && !finalEventId) {
         throw new Error("Please select an event");
       }
-      if (!finalDate) {
+      if (claimType === "course" && !finalDate) {
         throw new Error("Please select a date");
       }
 
