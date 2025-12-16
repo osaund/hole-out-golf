@@ -10,6 +10,7 @@ import ampfieldGolf from "@/assets/ampfield-golf.jpg";
 import biburyGolf from "@/assets/bibury-golf.jpg";
 import gratelyGolf from "@/assets/grately-golf.jpg";
 import salisburyGolf from "@/assets/salisbury-golf.jpg";
+import hogLogo from "@/assets/hog-logo.jpg";
 
 const courseImages: Record<string, string> = {
   'ampfield-golf.jpg': ampfieldGolf,
@@ -89,15 +90,8 @@ const Course = () => {
             )}
 
             <div className="flex flex-col gap-4">
-              <Button asChild size="lg" className="w-full">
-                <Link to="/auth">
-                  <LogIn className="mr-2 h-5 w-5" />
-                  Sign In
-                </Link>
-              </Button>
-              
               <Button
-                variant="outline"
+                variant="default"
                 size="lg"
                 className="w-full"
                 asChild
@@ -111,6 +105,17 @@ const Course = () => {
                   Play as Guest
                 </a>
               </Button>
+
+              <div className="flex flex-col items-center gap-3 pt-4 border-t">
+                <img src={hogLogo} alt="HOG Logo" className="h-12 w-12" />
+                <p className="text-sm text-muted-foreground">Already a member of HOG?</p>
+                <Button asChild variant="outline" size="lg" className="w-full">
+                  <Link to="/auth">
+                    <LogIn className="mr-2 h-5 w-5" />
+                    Sign In
+                  </Link>
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
