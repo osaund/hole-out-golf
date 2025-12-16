@@ -13,6 +13,7 @@ import biburyGolf from "@/assets/bibury-golf.jpg";
 import gratelyGolf from "@/assets/grately-golf.jpg";
 import ampfieldGolf from "@/assets/ampfield-golf.jpg";
 import shanklinSandownGolf from "@/assets/shanklin-sandown-golf.jpg";
+import westburyGolf from "@/assets/westbury-golf.jpg";
 
 interface CoursesTabProps {
   courses: any[];
@@ -34,6 +35,7 @@ const courseImages: Record<string, string> = {
   "grately-golf.jpg": gratelyGolf,
   "ampfield-golf.jpg": ampfieldGolf,
   "shanklin-sandown-golf.jpg": shanklinSandownGolf,
+  "westbury-golf.jpg": westburyGolf,
 };
 
 export const CoursesTab = ({ courses }: CoursesTabProps) => {
