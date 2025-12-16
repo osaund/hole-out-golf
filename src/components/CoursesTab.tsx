@@ -261,11 +261,9 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
                 <Play className="w-4 h-4 mr-2" />
                 {loadingPlayedStatus 
                   ? "Loading..."
-                  : playedToday.has(course.id) 
-                    ? "Played Today" 
-                    : (!subscribed && singlePlayUsedToday && hasSinglePlayCredit)
-                      ? "Credit Used Today"
-                      : "Play Now"}
+                  : (playedToday.has(course.id) || (!subscribed && singlePlayUsedToday && hasSinglePlayCredit))
+                    ? "Already Played Today"
+                    : "Play Now"}
               </Button>
             )}
             {course.coming_soon && (
