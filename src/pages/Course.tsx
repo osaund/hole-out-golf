@@ -119,6 +119,17 @@ const Course = () => {
                   </Link>
                 </Button>
               </div>
+
+              <div className="text-center pt-4 border-t">
+                <a
+                  href="https://holeoutgolf.co.uk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:underline"
+                >
+                  Visit holeoutgolf.co.uk
+                </a>
+              </div>
             </div>
           </CardContent>
         </Card>
