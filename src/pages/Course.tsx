@@ -71,6 +71,7 @@ const Course = () => {
       <div className="container mx-auto px-4 py-8 -mt-20 relative z-10">
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center">
+            <img src={hogLogo} alt="HOG Logo" className="h-16 w-16 mx-auto mb-2" />
             <CardTitle className="text-3xl font-bold">{course.name}</CardTitle>
             {course.location && (
               <p className="text-muted-foreground">{course.location}</p>
@@ -107,7 +108,6 @@ const Course = () => {
               </Button>
 
               <div className="flex flex-col items-center gap-3 pt-4 border-t">
-                <img src={hogLogo} alt="HOG Logo" className="h-12 w-12" />
                 <p className="text-sm text-muted-foreground">Already a member of HOG?</p>
                 <Button asChild variant="outline" size="lg" className="w-full">
                   <Link to="/auth">
