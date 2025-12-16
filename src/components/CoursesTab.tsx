@@ -41,11 +41,15 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
   const [playedToday, setPlayedToday] = useState<Set<string>>(new Set());
   const [alertDismissed, setAlertDismissed] = useState(false);
   const [singlePlayUsedToday, setSinglePlayUsedToday] = useState(false);
+  const [loadingPlayedStatus, setLoadingPlayedStatus] = useState(true);
   const sortedCourses = sortCourses(courses);
 
   useEffect(() => {
     const checkPlayedCourses = async () => {
-      if (!user) return;
+      if (!user) {
+        setLoadingPlayedStatus(false);
+        return;
+      }
 
       const today = new Date().toISOString().split('T')[0];
       const { data: todaysShots } = await supabase
@@ -68,6 +72,7 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
         .lt("used_at", `${today}T23:59:59`);
 
       setSinglePlayUsedToday((usedCredits?.length || 0) > 0);
+      setLoadingPlayedStatus(false);
     };
 
     checkPlayedCourses();
@@ -251,14 +256,16 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
                 onClick={() => handlePlayNow(course)}
                 className="w-full"
                 size="lg"
-                disabled={playedToday.has(course.id) || (!subscribed && singlePlayUsedToday && hasSinglePlayCredit)}
+                disabled={loadingPlayedStatus || playedToday.has(course.id) || (!subscribed && singlePlayUsedToday && hasSinglePlayCredit)}
               >
                 <Play className="w-4 h-4 mr-2" />
-                {playedToday.has(course.id) 
-                  ? "Played Today" 
-                  : (!subscribed && singlePlayUsedToday && hasSinglePlayCredit)
-                    ? "Credit Used Today"
-                    : "Play Now"}
+                {loadingPlayedStatus 
+                  ? "Loading..."
+                  : playedToday.has(course.id) 
+                    ? "Played Today" 
+                    : (!subscribed && singlePlayUsedToday && hasSinglePlayCredit)
+                      ? "Credit Used Today"
+                      : "Play Now"}
               </Button>
             )}
             {course.coming_soon && (
