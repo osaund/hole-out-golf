@@ -37,8 +37,8 @@ export const SubscribeDialog = ({ open, onOpenChange }: SubscribeDialogProps) =>
       if (error) throw error;
 
       if (data?.url) {
-        window.open(data.url, "_blank");
-        onOpenChange(false);
+        // Use location.href for better mobile compatibility
+        window.location.href = data.url;
       }
     } catch (error: any) {
       toast({
