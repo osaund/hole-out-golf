@@ -100,8 +100,7 @@ export const SubscribeDialog = ({ open, onOpenChange }: SubscribeDialogProps) =>
                       <p className="font-bold text-primary">£9.99<span className="text-sm font-normal">/mo</span></p>
                     </div>
                     <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                      <li>✓ Unlimited shots at all courses</li>
-                      <li>✓ Enter all prize draws</li>
+                      <li>✓ A shot every day on every course</li>
                       <li>✓ Track your shot history</li>
                     </ul>
                   </div>
