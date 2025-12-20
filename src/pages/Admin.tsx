@@ -6,9 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, DollarSign, ArrowLeft, Save, Calendar, Users } from "lucide-react";
+import { Trophy, DollarSign, ArrowLeft, Save } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
@@ -21,24 +20,10 @@ export default function Admin() {
   const { toast } = useToast();
   const [claims, setClaims] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
-  const [events, setEvents] = useState<any[]>([]);
-  const [eventRegistrations, setEventRegistrations] = useState<any[]>([]);
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [prizeAmounts, setPrizeAmounts] = useState<{ [key: string]: string }>({});
-  const [entryFees, setEntryFees] = useState<{ [key: string]: string }>({});
   const [editingNotes, setEditingNotes] = useState<{ [key: string]: string }>({});
-  const [registrationSearch, setRegistrationSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-
-  // Filter registrations based on search
-  const filteredRegistrations = eventRegistrations.filter((reg) => {
-    if (!registrationSearch) return true;
-    const searchLower = registrationSearch.toLowerCase();
-    const fullName = `${reg.profiles?.first_name || ""} ${reg.profiles?.last_name || ""}`.toLowerCase();
-    const email = (reg.profiles?.email || "").toLowerCase();
-    return fullName.includes(searchLower) || email.includes(searchLower);
-  });
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -53,10 +38,9 @@ export default function Admin() {
   }, [isAdmin]);
 
   const fetchData = async () => {
-    const [claimsData, coursesData, eventsData] = await Promise.all([
+    const [claimsData, coursesData] = await Promise.all([
       supabase.from("prize_claims").select("*, profiles(id, first_name, last_name, full_name, email, phone_number, created_at), shots:shot_id(created_at)").order("created_at", { ascending: false }),
       supabase.from("courses").select("*").order("name"),
-      supabase.from("events").select("*").order("date", { ascending: true }),
     ]);
 
     if (claimsData.error) {
@@ -84,74 +68,6 @@ export default function Admin() {
         amounts[course.id] = course.prize_amount?.toString() || "0";
       });
       setPrizeAmounts(amounts);
-    }
-
-    if (eventsData.error) {
-      console.error("Error fetching events:", eventsData.error);
-    } else {
-      setEvents(eventsData.data || []);
-      const fees: { [key: string]: string } = {};
-      (eventsData.data || []).forEach((event) => {
-        fees[event.id] = event.entry_fee?.toString() || "0";
-      });
-      setEntryFees(fees);
-      
-      // Select first event by default
-      if (eventsData.data && eventsData.data.length > 0 && !selectedEventId) {
-        setSelectedEventId(eventsData.data[0].id);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (selectedEventId) {
-      fetchEventRegistrations(selectedEventId);
-    }
-  }, [selectedEventId]);
-
-  const fetchEventRegistrations = async (eventId: string) => {
-    const { data, error } = await supabase
-      .from("event_registrations")
-      .select("*, profiles(id, first_name, last_name, full_name, email, phone_number)")
-      .eq("event_id", eventId)
-      .order("registered_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching registrations:", error);
-    } else {
-      setEventRegistrations(data || []);
-    }
-  };
-
-  const handleEntryFeeUpdate = async (eventId: string) => {
-    const fee = parseFloat(entryFees[eventId]);
-    
-    if (isNaN(fee) || fee < 0) {
-      toast({
-        title: "Invalid Amount",
-        description: "Please enter a valid entry fee",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const { error } = await supabase
-      .from("events")
-      .update({ entry_fee: fee })
-      .eq("id", eventId);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "Entry fee updated successfully",
-      });
-      fetchData();
     }
   };
 
@@ -236,17 +152,6 @@ export default function Admin() {
     return course ? course.name : "Unknown Course";
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "bg-success text-success-foreground";
-      case "rejected":
-        return "bg-destructive text-destructive-foreground";
-      default:
-        return "bg-secondary text-secondary-foreground";
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -284,7 +189,6 @@ export default function Admin() {
         <Tabs defaultValue="claims" className="space-y-6">
           <TabsList>
             <TabsTrigger value="claims">Prize Claims</TabsTrigger>
-            <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="prizes">Prize Pots</TabsTrigger>
           </TabsList>
 
@@ -421,103 +325,6 @@ export default function Admin() {
                 </CardContent>
               </Card>
             ))}
-          </TabsContent>
-
-          <TabsContent value="events" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Event Registrations
-                </CardTitle>
-                <CardDescription>View and manage event registrations</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Filters Row */}
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Select
-                    value={selectedEventId || ""}
-                    onValueChange={(value) => setSelectedEventId(value)}
-                  >
-                    <SelectTrigger className="w-full sm:w-[300px]">
-                      <SelectValue placeholder="Select an event" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {events.filter((event) => event.enabled).map((event) => (
-                        <SelectItem key={event.id} value={event.id}>
-                          {event.round} - {event.venue} ({format(new Date(event.date), "PP")}){event.entry_fee ? ` - £${event.entry_fee}` : ''}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  
-                  <Input
-                    placeholder="Search by name or email..."
-                    value={registrationSearch}
-                    onChange={(e) => setRegistrationSearch(e.target.value)}
-                    className="w-full sm:w-[250px]"
-                  />
-                  
-                  {selectedEventId && (
-                    <Badge variant="outline" className="h-10 px-4 flex items-center">
-                      {filteredRegistrations.length} registrations
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Registrations Table */}
-                {!selectedEventId ? (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>Select an event to view registrations</p>
-                  </div>
-                ) : filteredRegistrations.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>{registrationSearch ? "No matching registrations found" : "No registrations for this event yet"}</p>
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead>Registered At</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredRegistrations.map((reg) => (
-                        <TableRow key={reg.id}>
-                          <TableCell className="font-medium">
-                            <button
-                              onClick={() => {
-                                setSelectedUser(reg.profiles);
-                                setIsUserModalOpen(true);
-                              }}
-                              className="text-primary hover:underline cursor-pointer text-left"
-                            >
-                              {reg.profiles?.first_name} {reg.profiles?.last_name}
-                            </button>
-                          </TableCell>
-                          <TableCell>{reg.profiles?.email || "-"}</TableCell>
-                          <TableCell>{reg.profiles?.phone_number || "-"}</TableCell>
-                          <TableCell>
-                            {format(new Date(reg.registered_at), "PPp")}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant={reg.attended ? "default" : "secondary"}>
-                              {reg.attended ? "Attended" : "Registered"}
-                            </Badge>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
       </div>
