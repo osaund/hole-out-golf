@@ -239,32 +239,26 @@ export type Database = {
         Row: {
           course_id: string
           created_at: string
-          hole_number: number
           id: string
           is_hole_in_one: boolean | null
           played_at: string | null
           user_id: string
-          video_url: string | null
         }
         Insert: {
           course_id: string
           created_at?: string
-          hole_number: number
           id?: string
           is_hole_in_one?: boolean | null
           played_at?: string | null
           user_id: string
-          video_url?: string | null
         }
         Update: {
           course_id?: string
           created_at?: string
-          hole_number?: number
           id?: string
           is_hole_in_one?: boolean | null
           played_at?: string | null
           user_id?: string
-          video_url?: string | null
         }
         Relationships: [
           {
