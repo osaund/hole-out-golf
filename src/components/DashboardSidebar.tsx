@@ -1,4 +1,4 @@
-import { MapPin, Calendar, Target, Trophy, Shield, UserCircle, LogOut, Mail, PartyPopper } from "lucide-react";
+import { MapPin, Target, Trophy, Shield, UserCircle, LogOut, Mail, PartyPopper } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -25,7 +25,6 @@ interface DashboardSidebarProps {
 
 const menuItems = [
   { id: "courses", title: "Courses", icon: MapPin },
-  { id: "events", title: "Events", icon: Calendar },
   { id: "shots", title: "Shots", icon: Target },
 ];
 

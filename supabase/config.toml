@@ -6,7 +6,3 @@ jwt_expiry = 604800
 
 [functions.send-prize-claim-email]
 verify_jwt = false
-
-[functions.create-event-checkout]
-
-[functions.verify-event-payment]

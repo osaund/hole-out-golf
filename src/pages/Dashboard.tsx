@@ -12,7 +12,6 @@ import { PrizeClaimForm } from "@/components/PrizeClaimForm";
 import { CoursesTab } from "@/components/CoursesTab";
 import { PrizeClaimsTab } from "@/components/PrizeClaimsTab";
 import { ShotsTab } from "@/components/ShotsTab";
-import { EventsTab } from "@/components/EventsTab";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
 
@@ -116,8 +115,6 @@ const Dashboard = () => {
     switch (activeTab) {
       case "courses":
         return <CoursesTab courses={courses} />;
-      case "events":
-        return <EventsTab />;
       case "shots":
         return <ShotsTab shots={shots} courses={courses} />;
       case "claims":
