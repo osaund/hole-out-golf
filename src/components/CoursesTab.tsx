@@ -151,7 +151,6 @@ export const CoursesTab = ({ courses }: CoursesTabProps) => {
       const { error } = await supabase.from("shots").insert({
         user_id: user.id,
         course_id: course.id,
-        hole_number: 1, // Default to hole 1 for now
         is_hole_in_one: false,
         played_at: playedAt,
       });
