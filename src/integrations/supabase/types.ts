@@ -58,7 +58,6 @@ export type Database = {
           id: string
           notes: string | null
           prize_amount: number | null
-          shot_id: string | null
           status: string | null
           tee_time: string | null
           time_of_hole_in_one: string | null
@@ -71,7 +70,6 @@ export type Database = {
           id?: string
           notes?: string | null
           prize_amount?: number | null
-          shot_id?: string | null
           status?: string | null
           tee_time?: string | null
           time_of_hole_in_one?: string | null
@@ -84,7 +82,6 @@ export type Database = {
           id?: string
           notes?: string | null
           prize_amount?: number | null
-          shot_id?: string | null
           status?: string | null
           tee_time?: string | null
           time_of_hole_in_one?: string | null
@@ -96,13 +93,6 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prize_claims_shot_id_fkey"
-            columns: ["shot_id"]
-            isOneToOne: false
-            referencedRelation: "shots"
             referencedColumns: ["id"]
           },
           {
