@@ -92,7 +92,7 @@ const Course = () => {
 
             <div className="flex flex-col gap-4">
               <p className="text-sm text-muted-foreground text-center">
-                You must be 18+ to play. One play per course per day.
+                You must be 18+ to play. One play per day.
               </p>
               <Button
                 variant="default"
