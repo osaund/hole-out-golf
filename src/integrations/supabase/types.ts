@@ -50,90 +50,11 @@ export type Database = {
         }
         Relationships: []
       }
-      event_registrations: {
-        Row: {
-          attended: boolean | null
-          event_id: string
-          id: string
-          registered_at: string
-          user_id: string
-        }
-        Insert: {
-          attended?: boolean | null
-          event_id: string
-          id?: string
-          registered_at?: string
-          user_id: string
-        }
-        Update: {
-          attended?: boolean | null
-          event_id?: string
-          id?: string
-          registered_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "event_registrations_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_registrations_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      events: {
-        Row: {
-          created_at: string
-          date: string
-          enabled: boolean | null
-          entry_fee: number | null
-          id: string
-          nearest_pin_prize: number | null
-          organizer: string
-          region: string
-          round: string
-          venue: string
-        }
-        Insert: {
-          created_at?: string
-          date: string
-          enabled?: boolean | null
-          entry_fee?: number | null
-          id?: string
-          nearest_pin_prize?: number | null
-          organizer?: string
-          region: string
-          round: string
-          venue: string
-        }
-        Update: {
-          created_at?: string
-          date?: string
-          enabled?: boolean | null
-          entry_fee?: number | null
-          id?: string
-          nearest_pin_prize?: number | null
-          organizer?: string
-          region?: string
-          round?: string
-          venue?: string
-        }
-        Relationships: []
-      }
       prize_claims: {
         Row: {
           claim_date: string
           course_id: string | null
           created_at: string
-          event_id: string | null
           id: string
           notes: string | null
           prize_amount: number | null
@@ -147,7 +68,6 @@ export type Database = {
           claim_date?: string
           course_id?: string | null
           created_at?: string
-          event_id?: string | null
           id?: string
           notes?: string | null
           prize_amount?: number | null
@@ -161,7 +81,6 @@ export type Database = {
           claim_date?: string
           course_id?: string | null
           created_at?: string
-          event_id?: string | null
           id?: string
           notes?: string | null
           prize_amount?: number | null
@@ -177,13 +96,6 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prize_claims_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
             referencedColumns: ["id"]
           },
           {
