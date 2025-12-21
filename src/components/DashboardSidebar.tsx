@@ -1,4 +1,4 @@
-import { MapPin, Target, Trophy, Shield, UserCircle, LogOut, Mail, PartyPopper } from "lucide-react";
+import { MapPin, Target, Trophy, Shield, UserCircle, LogOut, Mail, PartyPopper, CreditCard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -138,6 +138,12 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
             <SidebarMenuButton onClick={() => handleNavigate("/settings")}>
               <UserCircle className="h-4 w-4" />
               <span>Profile</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => handleNavigate("/plan-and-billing")}>
+              <CreditCard className="h-4 w-4" />
+              <span>Plan & Billing</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
