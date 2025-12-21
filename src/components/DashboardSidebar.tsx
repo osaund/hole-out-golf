@@ -126,7 +126,10 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => handleNavigate("/plan-and-billing")}>
+                <SidebarMenuButton
+                  isActive={activeTab === "billing"}
+                  onClick={() => handleTabChange("billing")}
+                >
                   <CreditCard className="h-4 w-4" />
                   <span>Plan & Billing</span>
                 </SidebarMenuButton>
