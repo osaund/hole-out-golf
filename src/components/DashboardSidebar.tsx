@@ -116,6 +116,26 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
         )}
 
         <SidebarGroup>
+          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => handleNavigate("/settings")}>
+                  <UserCircle className="h-4 w-4" />
+                  <span>Profile</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => handleNavigate("/plan-and-billing")}>
+                  <CreditCard className="h-4 w-4" />
+                  <span>Plan & Billing</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
           <SidebarGroupLabel>Support</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -134,18 +154,6 @@ export function DashboardSidebar({ activeTab, onTabChange, isAdmin, onLogout, on
 
       <SidebarFooter className="border-t border-sidebar-border p-4">
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => handleNavigate("/settings")}>
-              <UserCircle className="h-4 w-4" />
-              <span>Profile</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => handleNavigate("/plan-and-billing")}>
-              <CreditCard className="h-4 w-4" />
-              <span>Plan & Billing</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={onLogout}>
               <LogOut className="h-4 w-4" />
