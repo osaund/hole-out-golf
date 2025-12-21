@@ -39,7 +39,7 @@ export default function Admin() {
 
   const fetchData = async () => {
     const [claimsData, coursesData] = await Promise.all([
-      supabase.from("prize_claims").select("*, profiles(id, first_name, last_name, full_name, email, phone_number, created_at)").order("created_at", { ascending: false }),
+      supabase.from("prize_claims").select("*, profiles(id, first_name, last_name, email, phone_number, created_at)").order("created_at", { ascending: false }),
       supabase.from("courses").select("*").order("name"),
     ]);
 
