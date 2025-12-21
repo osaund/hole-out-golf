@@ -12,6 +12,7 @@ import { PrizeClaimForm } from "@/components/PrizeClaimForm";
 import { CoursesTab } from "@/components/CoursesTab";
 import { PrizeClaimsTab } from "@/components/PrizeClaimsTab";
 import { ShotsTab } from "@/components/ShotsTab";
+import { PlanBillingTab } from "@/components/PlanBillingTab";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
 
@@ -119,6 +120,8 @@ const Dashboard = () => {
         return <ShotsTab shots={shots} courses={courses} />;
       case "claims":
         return <PrizeClaimsTab claims={prizeClaims} courses={courses} />;
+      case "billing":
+        return <PlanBillingTab session={session} />;
       default:
         return <CoursesTab courses={courses} />;
     }
