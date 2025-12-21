@@ -69,7 +69,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
       // Get user profile for email
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("first_name, last_name")
         .eq("id", userId)
         .single();
 
@@ -94,7 +94,7 @@ export const PrizeClaimForm = ({ open, onOpenChange, courses, userId, onSuccess 
           body: {
             courseName: locationName,
             userEmail: user?.email,
-            userName: profile?.full_name || user?.email,
+            userName: profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : user?.email,
             teeTime: timeOfHoleInOne,
             notes: notes,
             claimDate: claimDate.toISOString(),
