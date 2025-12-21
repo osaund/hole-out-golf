@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Trophy, LogIn, Play } from "lucide-react";
 
 // Import course images
@@ -21,6 +23,7 @@ const courseImages: Record<string, string> = {
 
 const Course = () => {
   const { id } = useParams<{ id: string }>();
+  const [confirmed, setConfirmed] = useState(false);
 
   const { data: course, isLoading } = useQuery({
     queryKey: ['course', id],
@@ -91,23 +94,41 @@ const Course = () => {
             )}
 
             <div className="flex flex-col gap-4">
-              <p className="text-sm text-muted-foreground text-center">
-                You must be 18+ to play. One play per day.
-              </p>
+              <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
+                <Checkbox
+                  id="age-confirmation"
+                  checked={confirmed}
+                  onCheckedChange={(checked) => setConfirmed(checked === true)}
+                />
+                <label
+                  htmlFor="age-confirmation"
+                  className="text-sm text-muted-foreground cursor-pointer leading-relaxed"
+                >
+                  I confirm I am 18+ and have not already entered today
+                </label>
+              </div>
               <Button
                 variant="default"
                 size="lg"
                 className="w-full"
-                asChild
+                disabled={!confirmed}
+                asChild={confirmed}
               >
-                <a
-                  href="https://buy.stripe.com/test_9B6aEXdT8bhhahE95xefC01"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Play className="mr-2 h-5 w-5" />
-                  Play as Guest
-                </a>
+                {confirmed ? (
+                  <a
+                    href="https://buy.stripe.com/test_9B6aEXdT8bhhahE95xefC01"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Play className="mr-2 h-5 w-5" />
+                    Play as Guest
+                  </a>
+                ) : (
+                  <span>
+                    <Play className="mr-2 h-5 w-5" />
+                    Play as Guest
+                  </span>
+                )}
               </Button>
 
               <div className="flex flex-col items-center gap-3 pt-4 border-t">
