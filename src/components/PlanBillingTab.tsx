@@ -146,7 +146,6 @@ export function PlanBillingTab({ session }: PlanBillingTabProps) {
                 variant={subscribed ? "outline" : "default"}
                 className="w-full"
                 onClick={handleManageSubscription}
-                disabled
               >
                 {subscribed ? "Manage Subscription" : "Subscribe Now - £9.99/month"}
               </Button>
