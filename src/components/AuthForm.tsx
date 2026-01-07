@@ -372,9 +372,14 @@ export const AuthForm = () => {
                         </button>
                       </div>
                     )}
-                    <Button type="submit" className="w-full" disabled={loading}>
+                    <Button type="submit" className="w-full" disabled={loading || !isLogin}>
                       {loading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
                     </Button>
+                    {!isLogin && (
+                      <p className="text-sm text-muted-foreground text-center mt-2">
+                        🚧 We're not quite live yet! Sign-ups will open soon.
+                      </p>
+                    )}
                   </form>
                   <div className="mt-4 text-center text-sm">
                     <button
