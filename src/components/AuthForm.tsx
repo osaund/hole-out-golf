@@ -195,6 +195,9 @@ export const AuthForm = () => {
             <img src={logo} alt="Hole Out Golf" className="w-24 h-24" />
           </div>
           <CardTitle className="text-3xl font-bold">Hole Out Golf</CardTitle>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-amber-800 text-sm">
+            🚧 We're not quite live yet! Sign-ups will open soon.
+          </div>
           <CardDescription>
             {isResetPassword 
               ? "Set your new password"
