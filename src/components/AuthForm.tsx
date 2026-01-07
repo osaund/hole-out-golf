@@ -385,13 +385,19 @@ export const AuthForm = () => {
                     )}
                   </form>
                   <div className="mt-4 text-center text-sm">
-                    <button
-                      type="button"
-                      onClick={() => setIsLogin(!isLogin)}
-                      className="text-primary hover:underline"
-                    >
-                      {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-                    </button>
+                    {isLogin ? (
+                      <span className="text-muted-foreground cursor-not-allowed">
+                        Don't have an account? Sign up
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setIsLogin(true)}
+                        className="text-primary hover:underline"
+                      >
+                        Already have an account? Sign in
+                      </button>
+                    )}
                   </div>
                 </>
               )}
